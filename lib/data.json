@@ -1,0 +1,93 @@
+{
+  "income": [
+    {
+      "id": "1",
+      "date": "2025-01-15",
+      "incomeType": "account",
+      "amount": 3000,
+      "category": "salary"
+    },
+    {
+      "id": "2",
+      "date": "2025-01-20",
+      "incomeType": "cash",
+      "amount": 500,
+      "category": "other"
+    },
+    {
+      "id": "3",
+      "date": "2025-02-15",
+      "incomeType": "account",
+      "amount": 3000,
+      "category": "salary"
+    },
+    {
+      "id": "4",
+      "date": "2025-02-16",
+      "incomeType": "cash",
+      "amount": 500,
+      "category": "other"
+    }
+  ],
+  "expenses": [
+    {
+      "id": "1",
+      "date": "2025-01-16",
+      "paymentType": "account",
+      "amount": 150,
+      "category": "shopping"
+    },
+    {
+      "id": "2",
+      "date": "2025-01-18",
+      "paymentType": "cash",
+      "amount": 50,
+      "category": "transportation"
+    },
+    {
+      "id": "3",
+      "date": "2025-01-22",
+      "paymentType": "account",
+      "amount": 200,
+      "category": "entertainment"
+    },
+    {
+      "id": "4",
+      "date": "2025-02-03",
+      "paymentType": "account",
+      "amount": 180,
+      "category": "shopping"
+    }
+  ],
+  "savings": [
+    {
+      "id": "1",
+      "goal": "Emergency Fund",
+      "incomeType": "account",
+      "status": "pending",
+      "targetAmount": 5000,
+      "currentAmount": 2500
+    },
+    {
+      "id": "2",
+      "goal": "Vacation",
+      "incomeType": "cash",
+      "status": "pending",
+      "targetAmount": 2000,
+      "currentAmount": 1800
+    },
+    {
+      "id": "3",
+      "goal": "New Laptop",
+      "incomeType": "account",
+      "status": "completed",
+      "targetAmount": 1500,
+      "currentAmount": 1500
+    }
+  ],
+  "savingsPercentage": 20,
+  "bank": {
+    "cash": 850,
+    "account": 4200
+  }
+}
