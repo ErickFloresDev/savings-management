@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -47,13 +47,12 @@ import { Progress } from "@/components/ui/progress"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Separator } from "@/components/ui/separator"
 
 export default function SavingsPage() {
-  const { savings, bank, addSavings, updateSavings, deleteSavings, addAmountToGoal, updateSavingsPercentage } =
-    useData()
+  const { savings, income, expenses, addSavings, updateSavings, deleteSavings, addAmountToGoal } = useData()
   const { toast } = useToast()
   const [openGoal, setOpenGoal] = useState(false)
-  const [openPercentage, setOpenPercentage] = useState(false)
   const [editGoal, setEditGoal] = useState<string | null>(null)
   const [deleteGoalId, setDeleteGoalId] = useState<string | null>(null)
 
@@ -63,7 +62,34 @@ export default function SavingsPage() {
     targetAmount: "",
     currentAmount: "",
   })
-  const [percentageValue, setPercentageValue] = useState(bank.savingsPercentage.toString())
+
+  // Calcular balances disponibles
+  const balances = useMemo(() => {
+    const calculateBalance = (type: "cash" | "account") => {
+      const totalIncome = income
+        .filter(i => i.incomeType === type)
+        .reduce((sum, i) => sum + i.amount, 0)
+      
+      const totalExpenses = expenses
+        .filter(e => e.paymentType === type)
+        .reduce((sum, e) => sum + e.amount, 0)
+      
+      const totalSavings = savings
+        .filter(s => s.incomeType === type)
+        .reduce((sum, s) => sum + s.currentAmount, 0)
+      
+      return totalIncome - totalExpenses - totalSavings
+    }
+    
+    const cash = calculateBalance("cash")
+    const account = calculateBalance("account")
+    
+    return {
+      cash,
+      account,
+      total: cash + account
+    }
+  }, [income, expenses, savings])
 
   const handleEditClick = (goal: (typeof savings)[0]) => {
     setGoalFormData({
@@ -81,6 +107,17 @@ export default function SavingsPage() {
     try {
       const currentAmount = Number.parseFloat(goalFormData.currentAmount)
       const targetAmount = Number.parseFloat(goalFormData.targetAmount)
+
+      // Validar que hay fondos disponibles
+      const availableBalance = goalFormData.incomeType === "cash" ? balances.cash : balances.account
+      if (currentAmount > availableBalance) {
+        toast({
+          title: "Error",
+          description: `Insufficient funds in ${goalFormData.incomeType}. Available: S/. ${availableBalance.toFixed(2)}`,
+          variant: "destructive",
+        })
+        return
+      }
 
       addSavings({
         goal: goalFormData.goal,
@@ -106,6 +143,7 @@ export default function SavingsPage() {
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to create goal",
+        variant: "destructive",
       })
     }
   }
@@ -152,17 +190,6 @@ export default function SavingsPage() {
     })
   }
 
-  const handleUpdatePercentage = (e: React.FormEvent) => {
-    e.preventDefault()
-    updateSavingsPercentage(Number.parseFloat(percentageValue))
-    setOpenPercentage(false)
-
-    toast({
-      title: "Success",
-      description: `Savings percentage updated to ${percentageValue}%`,
-    })
-  }
-
   const handleToggleStatus = (id: string, currentStatus: "pending" | "completed") => {
     updateSavings(id, { status: currentStatus === "pending" ? "completed" : "pending" })
   }
@@ -187,7 +214,6 @@ export default function SavingsPage() {
     }
   }
 
-
   const totalSaved = savings.reduce((sum, s) => sum + s.currentAmount, 0)
   const totalTarget = savings.reduce((sum, s) => sum + s.targetAmount, 0)
   const completedGoals = savings.filter((s) => s.status === "completed").length
@@ -201,47 +227,6 @@ export default function SavingsPage() {
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {/* ================= SET % DIALOG ================= */}
-            <Dialog open={openPercentage} onOpenChange={setOpenPercentage}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="hidden md:flex gap-2 text-sm bg-transparent">
-                  <Percent className="h-4 w-4" />
-                  Percent
-                </Button>
-              </DialogTrigger>
-
-              <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle className="text-base">Update Savings Percentage</DialogTitle>
-                  <DialogDescription className="text-sm">
-                    Set the percentage of your income that will be saved automatically.
-                  </DialogDescription>
-                </DialogHeader>
-
-                <form onSubmit={handleUpdatePercentage} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="percentage" className="text-sm">
-                      Percentage
-                    </Label>
-                    <Input
-                      id="percentage"
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      max="100"
-                      value={percentageValue}
-                      onChange={(e) => setPercentageValue(e.target.value)}
-                      required
-                      className="text-sm"
-                    />
-                  </div>
-
-                  <Button type="submit" className="w-full text-sm">
-                    Update Percentage
-                  </Button>
-                </form>
-              </DialogContent>
-            </Dialog>
 
             {/* ================= ADD GOAL DIALOG ================= */}
             <Dialog open={openGoal} onOpenChange={setOpenGoal}>
@@ -285,7 +270,7 @@ export default function SavingsPage() {
                         setGoalFormData({ ...goalFormData, incomeType: value })
                       }
                     >
-                      <SelectTrigger className="text-sm">
+                      <SelectTrigger className="text-sm w-full">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -321,14 +306,15 @@ export default function SavingsPage() {
                     </Label>
                     <div className="text-xs text-muted-foreground mb-1">
                       Available in {goalFormData.incomeType}: S/.{" "}
-                      {(goalFormData.incomeType === "cash" ? bank.cash : bank.account).toFixed(2)} | Total: S/.{" "}
-                      {(bank.cash + bank.account).toFixed(2)}
+                      {(goalFormData.incomeType === "cash" ? balances.cash : balances.account).toFixed(2)} | Total: S/.{" "}
+                      {balances.total.toFixed(2)}
                     </div>
                     <Input
                       id="currentAmount"
                       type="number"
                       step="0.01"
                       min="0"
+                      max={goalFormData.incomeType === "cash" ? balances.cash : balances.account}
                       value={goalFormData.currentAmount}
                       onChange={(e) =>
                         setGoalFormData({
@@ -341,7 +327,7 @@ export default function SavingsPage() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full text-sm">
+                  <Button type="submit" className="w-full text-sm mt-2.5">
                     Add Goal
                   </Button>
                 </form>
@@ -380,7 +366,7 @@ export default function SavingsPage() {
                         setGoalFormData({ ...goalFormData, incomeType: value })
                       }
                     >
-                      <SelectTrigger className="text-sm">
+                      <SelectTrigger className="text-sm w-full">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -431,7 +417,7 @@ export default function SavingsPage() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full text-sm">
+                  <Button type="submit" className="w-full text-sm mt-2.5">
                     Update Goal
                   </Button>
                 </form>
@@ -463,11 +449,6 @@ export default function SavingsPage() {
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => setOpenPercentage(true)}>
-                    <Percent className="h-4 w-4 mr-2" />
-                    Percent
-                  </DropdownMenuItem>
-
                   <DropdownMenuItem onClick={() => setOpenGoal(true)}>
                     <Plus className="h-4 w-4 mr-2" />
                     Add Goal
@@ -479,7 +460,7 @@ export default function SavingsPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="hidden lg:grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card className="gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Saved</CardTitle>
@@ -502,16 +483,6 @@ export default function SavingsPage() {
         </Card>
         <Card className="gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Savings Rate</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl font-semibold">{bank.savingsPercentage}%</div>
-            <p className="text-xs text-muted-foreground mt-1">of income</p>
-          </CardContent>
-        </Card>
-        <Card className="gap-0">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Overall Progress</CardTitle>
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -524,59 +495,50 @@ export default function SavingsPage() {
         </Card>
       </div>
 
-      <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="bank-balance" className="border-none">
+      <div className="lg:hidden">
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="income" className="border-none">
+            <Card className="py-4">
+              <AccordionTrigger className="px-6 py-0">
+                <span className="text-sm font-medium">Savings Summary</span>
+              </AccordionTrigger>
 
-          <Card className="bg-white py-4">
-
-            {/* HEADER (Trigger) */}
-            <AccordionTrigger className="px-4 py-0 hover:no-underline">
-              <div className="flex w-full items-center justify-between">
-                <span className="text-sm text-muted-foreground">
-                  Available Bank Balance
-                </span>
-              </div>
-            </AccordionTrigger>
-
-            {/* CONTENT */}
-            <AccordionContent>
-              <CardContent className="space-y-0 pt-0">
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <Card className="rounded-lg border p-3 gap-2 text-center justify-center">
-                    <p className="text-xs text-muted-foreground">Cash</p>
-                    <p className="font-medium">
-                      S/. {bank.cash.toFixed(2)}
-                    </p>
-                  </Card>
-
-                  <Card className="rounded-lg border p-3 gap-2 text-center justify-center">
-                    <p className="text-xs text-muted-foreground">Account</p>
-                    <p className="font-medium">
-                      S/. {bank.account.toFixed(2)}
-                    </p>
-                  </Card>
-
-                  <Card className="rounded-lg border p-3 gap-2 text-center justify-center">
-                    <p className="text-xs text-muted-foreground">Total</p>
-                    <p className="font-semibold">
-                      S/. {(bank.cash + bank.account).toFixed(2)}
-                    </p>
-                  </Card>
-                </div>
-
-              </CardContent>
-            </AccordionContent>
-
-          </Card>
-        </AccordionItem>
-      </Accordion>
-
+              <AccordionContent>
+                <CardContent className="space-y-4 pt-4">
+                  {/* Total Saved */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Total Saved</span>
+                    <span className="text-sm">
+                      S/. {Number(totalSaved).toFixed(2)}
+                    </span>
+                  </div>
+                  <Separator className="my-4" />
+                  {/* Completed Goals */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Completed Goals</span>
+                    <span className="text-sm">
+                      {completedGoals}
+                    </span>
+                  </div>
+                  <Separator className="my-4" />
+                  {/* Overall Progress */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Overall Progress</span>
+                    <span className="text-sm">
+                      {totalTarget > 0 ? ((totalSaved / totalTarget) * 100).toFixed(0) : 0}%
+                    </span>
+                  </div>
+                </CardContent>
+              </AccordionContent>
+            </Card>
+          </AccordionItem>
+        </Accordion>
+      </div>
 
       <div className="grid gap-4">
         {savings.map((goal) => {
           const progress = (goal.currentAmount / goal.targetAmount) * 100
-          const availableBalance = goal.incomeType === "cash" ? bank.cash : bank.account
+          const availableBalance = goal.incomeType === "cash" ? balances.cash : balances.account
 
           return (
             <Card key={goal.id}>
@@ -613,7 +575,6 @@ export default function SavingsPage() {
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="end" className="w-40">
-
                       {/* Edit */}
                       <DropdownMenuItem onClick={() => handleEditClick(goal)}>
                         <Pencil className="mr-2 h-4 w-4" />
@@ -647,10 +608,8 @@ export default function SavingsPage() {
                         <Trash2 className="mr-2 h-4 w-4" />
                         Delete
                       </DropdownMenuItem>
-
                     </DropdownMenuContent>
                   </DropdownMenu>
-
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -659,7 +618,6 @@ export default function SavingsPage() {
                     <p className="text-sm font-medium">
                       S/. {Number(goal.currentAmount ?? 0).toFixed(2)} / S/. {Number(goal.targetAmount ?? 0).toFixed(2)}
                     </p>
-
                     <p className="text-sm font-semibold">{progress.toFixed(0)}%</p>
                   </div>
                   <Progress value={progress} className="h-2" />

@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Separator } from "@/components/ui/separator"
 
 export default function ExpensesPage() {
   const { expenses, addExpense, updateExpense, deleteExpense } = useData()
@@ -162,7 +164,7 @@ export default function ExpensesPage() {
                   value={formData.paymentType}
                   onValueChange={(value: "cash" | "account") => setFormData({ ...formData, paymentType: value })}
                 >
-                  <SelectTrigger className="text-sm">
+                  <SelectTrigger className="text-sm w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -199,7 +201,7 @@ export default function ExpensesPage() {
                     setFormData({ ...formData, category: value })
                   }
                 >
-                  <SelectTrigger className="text-sm">
+                  <SelectTrigger className="text-sm w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -215,7 +217,7 @@ export default function ExpensesPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <Button type="submit" className="w-full text-sm">
+              <Button type="submit" className="w-full text-sm mt-2.5">
                 {editingExpense ? "Update Expense" : "Add Expense"}
               </Button>
             </form>
@@ -223,7 +225,7 @@ export default function ExpensesPage() {
         </Dialog>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="hidden lg:grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
@@ -277,6 +279,66 @@ export default function ExpensesPage() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="lg:hidden">
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="income" className="border-none">
+            <Card className="py-4">
+              <AccordionTrigger className="px-6 py-0">
+                <span className="text-sm font-medium">Expense Summary</span>
+              </AccordionTrigger>
+
+              <AccordionContent>
+                <CardContent className="space-y-4 pt-4">
+                  {/* Total Income */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Total Expenses</span>
+                    <span className="text-sm">
+                      S/. {expenses.reduce((sum, e) => sum + e.amount, 0).toFixed(2)}
+                    </span>
+                  </div>
+                  <Separator className="my-4" />
+                  {/* Salary Income */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Shopping</span>
+                    <span className="text-sm">
+                      S/.{" "}
+                      {expenses
+                        .filter((e) => e.category === "shopping")
+                        .reduce((sum, e) => sum + e.amount, 0)
+                        .toFixed(2)}
+                    </span>
+                  </div>
+                  <Separator className="my-4" />
+                  {/* Other Income */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Transportation</span>
+                    <span className="text-sm">
+                      S/.{" "}
+                      {expenses
+                        .filter((e) => e.category === "transportation")
+                        .reduce((sum, e) => sum + e.amount, 0)
+                        .toFixed(2)}
+                    </span>
+                  </div>
+                  <Separator className="my-4" />
+                  {/* Other Income */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Entertainment</span>
+                    <span className="text-sm">
+                      S/.{" "}
+                      {expenses
+                        .filter((e) => e.category === "entertainment")
+                        .reduce((sum, e) => sum + e.amount, 0)
+                        .toFixed(2)}
+                    </span>
+                  </div>
+                </CardContent>
+              </AccordionContent>
+            </Card>
+          </AccordionItem>
+        </Accordion>
       </div>
 
       <Card>

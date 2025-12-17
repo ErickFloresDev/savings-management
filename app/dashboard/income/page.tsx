@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Separator } from "@/components/ui/separator"
 
 export default function IncomePage() {
   const { income, addIncome, updateIncome, deleteIncome } = useData()
@@ -155,7 +157,7 @@ export default function IncomePage() {
                   value={formData.incomeType}
                   onValueChange={(value: "cash" | "account") => setFormData({ ...formData, incomeType: value })}
                 >
-                  <SelectTrigger className="text-sm">
+                  <SelectTrigger className="text-sm w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -190,7 +192,7 @@ export default function IncomePage() {
                   value={formData.category}
                   onValueChange={(value: "salary" | "other") => setFormData({ ...formData, category: value })}
                 >
-                  <SelectTrigger className="text-sm">
+                  <SelectTrigger className="text-sm w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -203,7 +205,7 @@ export default function IncomePage() {
                   </SelectContent>
                 </Select>
               </div>
-              <Button type="submit" className="w-full text-sm">
+              <Button type="submit" className="w-full text-sm mt-2.5">
                 {editingIncome ? "Update Income" : "Add Income"}
               </Button>
             </form>
@@ -211,7 +213,7 @@ export default function IncomePage() {
         </Dialog>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="hidden lg:grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card className="gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Income</CardTitle>
@@ -253,6 +255,54 @@ export default function IncomePage() {
         </Card>
       </div>
 
+      <div className="lg:hidden">
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="income" className="border-none">
+            <Card className="py-4">
+              <AccordionTrigger className="px-6 py-0">
+                <span className="text-sm font-medium">Income Summary</span>
+              </AccordionTrigger>
+
+              <AccordionContent>
+                <CardContent className="space-y-4 pt-4">
+                  {/* Total Income */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Total Income</span>
+                    <span className="text-sm">
+                      S/. {income.reduce((sum, i) => sum + i.amount, 0).toFixed(2)}
+                    </span>
+                  </div>
+                  <Separator className="my-4" />
+                  {/* Salary Income */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Salary Income</span>
+                    <span className="text-sm">
+                      S/.{" "}
+                      {income
+                        .filter((i) => i.category === "salary")
+                        .reduce((sum, i) => sum + i.amount, 0)
+                        .toFixed(2)}
+                    </span>
+                  </div>
+                  <Separator className="my-4" />
+                  {/* Other Income */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Other Income</span>
+                    <span className="text-sm">
+                      S/.{" "}
+                      {income
+                        .filter((i) => i.category === "other")
+                        .reduce((sum, i) => sum + i.amount, 0)
+                        .toFixed(2)}
+                    </span>
+                  </div>
+                </CardContent>
+              </AccordionContent>
+            </Card>
+          </AccordionItem>
+        </Accordion>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Income History</CardTitle>
@@ -278,7 +328,7 @@ export default function IncomePage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <p className="text-sm font-semibold">S/. {item.amount.toFixed(2)}</p>
+                  <p className="text-sm font-none lg:font-semibold">S/. {item.amount.toFixed(2)}</p>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button

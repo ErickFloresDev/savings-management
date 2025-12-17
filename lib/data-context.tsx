@@ -181,11 +181,6 @@ export function DataProvider({ children }: { children: ReactNode }) {
   }
 
   const addExpense = async (newExpense: Omit<Expense, "id">) => {
-    const availableInSource = newExpense.paymentType === "cash" ? bank.cash : bank.account
-
-    if (newExpense.amount > availableInSource) {
-      throw new Error(`Insufficient funds in ${newExpense.paymentType}. Available: S/. ${availableInSource.toFixed(2)}`)
-    }
 
     const apiExpense = {
       date: newExpense.date,
@@ -231,12 +226,6 @@ export function DataProvider({ children }: { children: ReactNode }) {
   }
 
   const addSavings = async (newSavings: Omit<Savings, "id">) => {
-    const availableInSource = newSavings.incomeType === "cash" ? bank.cash : bank.account
-
-    if (newSavings.currentAmount > availableInSource) {
-      throw new Error(`Insufficient funds in ${newSavings.incomeType}. Available: S/. ${availableInSource.toFixed(2)}`)
-    }
-
     const apiSaving = {
       goal: newSavings.goal,
       income_type: newSavings.incomeType,
@@ -287,7 +276,25 @@ export function DataProvider({ children }: { children: ReactNode }) {
       return { success: false, message: "Amount must be greater than 0" }
     }
 
-    const availableBalance = sourceType === "cash" ? bank.cash : bank.account
+    // Calcular balance disponible en tiempo real
+    const calculateAvailableBalance = (type: "cash" | "account") => {
+      const totalIncome = income
+        .filter(i => i.incomeType === type)
+        .reduce((sum, i) => sum + i.amount, 0)
+      
+      const totalExpenses = expenses
+        .filter(e => e.paymentType === type)
+        .reduce((sum, e) => sum + e.amount, 0)
+      
+      const totalSavings = savings
+        .filter(s => s.incomeType === type)
+        .reduce((sum, s) => sum + s.currentAmount, 0)
+      
+      return totalIncome - totalExpenses - totalSavings
+    }
+
+    const availableBalance = calculateAvailableBalance(sourceType)
+    
     if (amount > availableBalance) {
       return {
         success: false,
