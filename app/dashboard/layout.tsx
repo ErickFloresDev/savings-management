@@ -2,8 +2,6 @@
 
 import type React from "react"
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { NavBar } from "@/components/nav-bar"
 import { MobileNav } from "@/components/mobile-nav"
 
@@ -12,15 +10,6 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  const router = useRouter()
-
-  useEffect(() => {
-    const sessionUrl = localStorage.getItem("sessionUrl")
-    if (!sessionUrl) {
-      router.push("/login")
-    }
-  }, [router])
-
   return (
     <div className="min-h-screen bg-[#eceff967]">
       <NavBar />

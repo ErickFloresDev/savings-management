@@ -167,8 +167,12 @@ export default function SavingsPage() {
     updateSavings(id, { status: currentStatus === "pending" ? "completed" : "pending" })
   }
 
-  const handleUpdateAmount = (id: string, amount: number, goal: (typeof savings)[0]) => {
-    const result = addAmountToGoal(id, amount, goal.incomeType)
+  const handleUpdateAmount = async (
+    id: string,
+    amount: number,
+    goal: (typeof savings)[0]
+  ) => {
+    const result = await addAmountToGoal(id, amount, goal.incomeType)
 
     if (result.success) {
       toast({
@@ -182,6 +186,7 @@ export default function SavingsPage() {
       })
     }
   }
+
 
   const totalSaved = savings.reduce((sum, s) => sum + s.currentAmount, 0)
   const totalTarget = savings.reduce((sum, s) => sum + s.targetAmount, 0)
@@ -481,7 +486,7 @@ export default function SavingsPage() {
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-semibold">S/. {totalSaved.toFixed(2)}</div>
+            <div className="text-xl font-semibold">S/. {Number(totalSaved).toFixed(2)}</div>
             <p className="text-xs text-muted-foreground mt-1">of S/. {totalTarget.toFixed(2)} target</p>
           </CardContent>
         </Card>
@@ -592,7 +597,7 @@ export default function SavingsPage() {
                       )}
                     </p>
                     <p className="mt-1 text-sm text-muted-foreground flex items-center">
-                      Available: S/. {availableBalance.toFixed(2)} 
+                      Available: S/. {availableBalance.toFixed(2)}
                     </p>
                   </div>
 
@@ -608,7 +613,7 @@ export default function SavingsPage() {
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="end" className="w-40">
-                      
+
                       {/* Edit */}
                       <DropdownMenuItem onClick={() => handleEditClick(goal)}>
                         <Pencil className="mr-2 h-4 w-4" />
@@ -652,8 +657,9 @@ export default function SavingsPage() {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm font-medium">
-                      S/. {goal.currentAmount.toFixed(2)} / S/. {goal.targetAmount.toFixed(2)}
+                      S/. {Number(goal.currentAmount ?? 0).toFixed(2)} / S/. {Number(goal.targetAmount ?? 0).toFixed(2)}
                     </p>
+
                     <p className="text-sm font-semibold">{progress.toFixed(0)}%</p>
                   </div>
                   <Progress value={progress} className="h-2" />

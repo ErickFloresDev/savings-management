@@ -1,38 +1,30 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Home, DollarSign, CreditCard, PiggyBank, Building2, LogOut } from "lucide-react"
+import { Home, DollarSign, CreditCard, PiggyBank, Building2, LinkIcon } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { UrlModal } from "@/components/url-modal"
 
 export function NavBar() {
-  const router = useRouter()
+  const [isUrlModalOpen, setIsUrlModalOpen] = useState(false)
 
-  const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated")
-    localStorage.removeItem("username")
-    router.push("/login")
+  const handleUrlSaved = () => {
+    // Reload the page to fetch new data with the updated URL
+    window.location.reload()
   }
 
   return (
-    <nav className="border-b bg-background sticky top-0 z-50">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-14">
-
+    <>
+      <nav className="border-b bg-background sticky top-0 z-50">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-14">
             {/* LOGO + TEXTO */}
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <Image
-              src="/pig.png"
-              alt="Savings Manager"
-              width={28}
-              height={28}
-              priority
-            />
-            <span className="font-semibold text-lg line-clamp-1">
-              Save me
-            </span>
-          </Link>
+            <Link href="/dashboard" className="flex items-center gap-2">
+              <Image src="/pig.png" alt="Savings Manager" width={28} height={28} priority />
+              <span className="font-semibold text-lg line-clamp-1">Save me</span>
+            </Link>
 
             <div className="hidden md:flex items-center gap-2">
               <Link href="/dashboard">
@@ -66,12 +58,15 @@ export function NavBar() {
                 </Button>
               </Link>
             </div>
-          <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2 text-sm">
-            <LogOut className="h-4 w-4" />
-            Logout
-          </Button>
+            <Button variant="ghost" size="sm" onClick={() => setIsUrlModalOpen(true)} className="gap-2 text-sm">
+              <LinkIcon className="h-4 w-4" />
+              Link
+            </Button>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      <UrlModal open={isUrlModalOpen} onOpenChange={setIsUrlModalOpen} onUrlSaved={handleUrlSaved} />
+    </>
   )
 }

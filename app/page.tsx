@@ -7,12 +7,7 @@ export default function HomePage() {
   const router = useRouter()
 
   useEffect(() => {
-    const sessionUrl = localStorage.getItem("sessionUrl")
-    if (sessionUrl) {
-      router.push("/dashboard")
-    } else {
-      router.push("/login")
-    }
+    router.push("/dashboard")
   }, [router])
 
   return null

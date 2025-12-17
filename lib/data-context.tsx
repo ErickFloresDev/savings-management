@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
-import initialData from "./data.json"
+import * as api from "./api"
 
 type IncomeType = "cash" | "account"
 type ExpenseCategory = "shopping" | "transportation" | "entertainment"
@@ -44,59 +44,93 @@ export interface DataContextType {
   expenses: Expense[]
   savings: Savings[]
   bank: Bank
-  addIncome: (income: Omit<Income, "id">) => void
-  updateIncome: (id: string, updates: Partial<Omit<Income, "id">>) => void
-  deleteIncome: (id: string) => void
-  addExpense: (expense: Omit<Expense, "id">) => void
-  updateExpense: (id: string, updates: Partial<Omit<Expense, "id">>) => void
-  deleteExpense: (id: string) => void
-  addSavings: (savings: Omit<Savings, "id">) => void
-  updateSavings: (id: string, updates: Partial<Savings>) => void
-  deleteSavings: (id: string) => void
+  addIncome: (income: Omit<Income, "id">) => Promise<void>
+  updateIncome: (id: string, updates: Partial<Omit<Income, "id">>) => Promise<void>
+  deleteIncome: (id: string) => Promise<void>
+  addExpense: (expense: Omit<Expense, "id">) => Promise<void>
+  updateExpense: (id: string, updates: Partial<Omit<Expense, "id">>) => Promise<void>
+  deleteExpense: (id: string) => Promise<void>
+  addSavings: (savings: Omit<Savings, "id">) => Promise<void>
+  updateSavings: (id: string, updates: Partial<Savings>) => Promise<void>
+  deleteSavings: (id: string) => Promise<void>
   addAmountToGoal: (
     goalId: string,
     amount: number,
     sourceType: "cash" | "account",
-  ) => { success: boolean; message: string }
-  updateSavingsPercentage: (percentage: number) => void
-  updateBank: (type: "cash" | "account", amount: number) => void
+  ) => Promise<{ success: boolean; message: string }>
+  updateSavingsPercentage: (percentage: number) => Promise<void>
+  updateBank: (type: "cash" | "account", amount: number) => Promise<void>
   getTotalBalance: () => number
-  apiRequest: (method: "GET" | "POST", action?: "create" | "update" | "delete", data?: any) => Promise<void>
+  apiRequest: () => Promise<void>
   isLoading: boolean
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined)
 
 export function DataProvider({ children }: { children: ReactNode }) {
-  const [income, setIncome] = useState<Income[]>(initialData.income as Income[])
-  const [expenses, setExpenses] = useState<Expense[]>(initialData.expenses as Expense[])
-  const [savings, setSavings] = useState<Savings[]>(initialData.savings as Savings[])
-  const [bank, setBank] = useState<Bank>(initialData.bank)
+  const [income, setIncome] = useState<Income[]>([])
+  const [expenses, setExpenses] = useState<Expense[]>([])
+  const [savings, setSavings] = useState<Savings[]>([])
+  const [bank, setBank] = useState<Bank>({ cash: 0, account: 0, savingsPercentage: 10 })
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     const sessionUrl = localStorage.getItem("sessionUrl")
     if (sessionUrl) {
-      apiRequest("GET")
+      loadAllData()
     }
   }, [])
 
-  const apiRequest = async (method: "GET" | "POST", action?: "create" | "update" | "delete", data?: any) => {
+  const loadAllData = async () => {
     setIsLoading(true)
     try {
-      const sessionUrl = localStorage.getItem("sessionUrl")
-      if (!sessionUrl) {
-        console.log("[v0] No session URL found")
-        return
-      }
+      const [incomeData, expensesData, savingsData, bankData] = await Promise.all([
+        api.fetchIncome(),
+        api.fetchExpenses(),
+        api.fetchSavings(),
+        api.fetchBank(),
+      ])
 
-      if (method === "GET") {
-        console.log("[v0] GET request - Simulating data fetch")
-      } else if (method === "POST") {
-        console.log(`[v0] POST request - Action: ${action}`, data)
+      setIncome(
+        incomeData.map((item) => ({
+          id: item.id,
+          date: item.date,
+          incomeType: item.income_type,
+          amount: item.amount,
+          category: item.category,
+        })),
+      )
+
+      setExpenses(
+        expensesData.map((item) => ({
+          id: item.id,
+          date: item.date,
+          paymentType: item.payment_type,
+          amount: item.amount,
+          category: item.category,
+        })),
+      )
+
+      setSavings(
+        savingsData.map((item) => ({
+          id: item.id,
+          goal: item.goal,
+          incomeType: item.income_type,
+          status: item.status,
+          targetAmount: item.target_amount,
+          currentAmount: item.current_amount,
+        })),
+      )
+
+      if (bankData) {
+        setBank({
+          cash: bankData.cash,
+          account: bankData.account,
+          savingsPercentage: bankData.savings_percentage,
+        })
       }
     } catch (error) {
-      console.error("[v0] API Error:", error)
+      console.error("[v0] Error loading data:", error)
     } finally {
       setIsLoading(false)
     }
@@ -106,156 +140,149 @@ export function DataProvider({ children }: { children: ReactNode }) {
     return bank.cash + bank.account
   }
 
-  const addIncome = (newIncome: Omit<Income, "id">) => {
-    const income = { ...newIncome, id: Date.now().toString() }
-    setIncome((prev) => [...prev, income])
-    if (income.incomeType === "cash") {
-      setBank((prev) => ({ ...prev, cash: prev.cash + income.amount }))
-    } else {
-      setBank((prev) => ({ ...prev, account: prev.account + income.amount }))
+  const addIncome = async (newIncome: Omit<Income, "id">) => {
+    const apiIncome = {
+      date: newIncome.date,
+      income_type: newIncome.incomeType,
+      amount: newIncome.amount,
+      category: newIncome.category,
     }
-    apiRequest("POST", "create", { type: "income", data: income })
+
+    const success = await api.createIncome(apiIncome)
+    if (success) {
+      await loadAllData()
+    }
   }
 
-  const updateIncome = (id: string, updates: Partial<Omit<Income, "id">>) => {
+  const updateIncome = async (id: string, updates: Partial<Omit<Income, "id">>) => {
     const oldIncome = income.find((i) => i.id === id)
     if (!oldIncome) return
 
     const updatedIncome = { ...oldIncome, ...updates }
-
-    if (updates.amount !== undefined || updates.incomeType !== undefined) {
-      if (oldIncome.incomeType === "cash") {
-        setBank((prev) => ({ ...prev, cash: prev.cash - oldIncome.amount }))
-      } else {
-        setBank((prev) => ({ ...prev, account: prev.account - oldIncome.amount }))
-      }
-
-      if (updatedIncome.incomeType === "cash") {
-        setBank((prev) => ({ ...prev, cash: prev.cash + updatedIncome.amount }))
-      } else {
-        setBank((prev) => ({ ...prev, account: prev.account + updatedIncome.amount }))
-      }
+    const apiIncome = {
+      id: updatedIncome.id,
+      date: updatedIncome.date,
+      income_type: updatedIncome.incomeType,
+      amount: updatedIncome.amount,
+      category: updatedIncome.category,
     }
 
-    setIncome((prev) => prev.map((i) => (i.id === id ? updatedIncome : i)))
-    apiRequest("POST", "update", { type: "income", id, data: updates })
-  }
-
-  const deleteIncome = (id: string) => {
-    const incomeToDelete = income.find((i) => i.id === id)
-    if (!incomeToDelete) return
-
-    if (incomeToDelete.incomeType === "cash") {
-      setBank((prev) => ({ ...prev, cash: prev.cash - incomeToDelete.amount }))
-    } else {
-      setBank((prev) => ({ ...prev, account: prev.account - incomeToDelete.amount }))
+    const success = await api.updateIncome(apiIncome)
+    if (success) {
+      await loadAllData()
     }
-
-    setIncome((prev) => prev.filter((i) => i.id !== id))
-    apiRequest("POST", "delete", { type: "income", id })
   }
 
-  const addExpense = (newExpense: Omit<Expense, "id">) => {
+  const deleteIncome = async (id: string) => {
+    const success = await api.deleteIncome(id)
+    if (success) {
+      await loadAllData()
+    }
+  }
+
+  const addExpense = async (newExpense: Omit<Expense, "id">) => {
     const availableInSource = newExpense.paymentType === "cash" ? bank.cash : bank.account
 
     if (newExpense.amount > availableInSource) {
       throw new Error(`Insufficient funds in ${newExpense.paymentType}. Available: S/. ${availableInSource.toFixed(2)}`)
     }
 
-    const expense = { ...newExpense, id: Date.now().toString() }
-    setExpenses((prev) => [...prev, expense])
-    if (expense.paymentType === "cash") {
-      setBank((prev) => ({ ...prev, cash: prev.cash - expense.amount }))
-    } else {
-      setBank((prev) => ({ ...prev, account: prev.account - expense.amount }))
+    const apiExpense = {
+      date: newExpense.date,
+      payment_type: newExpense.paymentType,
+      amount: newExpense.amount,
+      category: newExpense.category,
     }
-    apiRequest("POST", "create", { type: "expense", data: expense })
+
+    console.log("[v0] Creating expense:", apiExpense)
+    console.log("[v0] Balance before expense - Cash:", bank.cash, "Account:", bank.account)
+
+    const success = await api.createExpense(apiExpense)
+    if (success) {
+      await loadAllData()
+      console.log("[v0] Balance after expense - Cash:", bank.cash, "Account:", bank.account)
+    }
   }
 
-  const updateExpense = (id: string, updates: Partial<Omit<Expense, "id">>) => {
+  const updateExpense = async (id: string, updates: Partial<Omit<Expense, "id">>) => {
     const oldExpense = expenses.find((e) => e.id === id)
     if (!oldExpense) return
 
     const updatedExpense = { ...oldExpense, ...updates }
-
-    if (updates.amount !== undefined || updates.paymentType !== undefined) {
-      if (oldExpense.paymentType === "cash") {
-        setBank((prev) => ({ ...prev, cash: prev.cash + oldExpense.amount }))
-      } else {
-        setBank((prev) => ({ ...prev, account: prev.account + oldExpense.amount }))
-      }
-
-      if (updatedExpense.paymentType === "cash") {
-        setBank((prev) => ({ ...prev, cash: prev.cash - updatedExpense.amount }))
-      } else {
-        setBank((prev) => ({ ...prev, account: prev.account - updatedExpense.amount }))
-      }
+    const apiExpense = {
+      id: updatedExpense.id,
+      date: updatedExpense.date,
+      payment_type: updatedExpense.paymentType,
+      amount: updatedExpense.amount,
+      category: updatedExpense.category,
     }
 
-    setExpenses((prev) => prev.map((e) => (e.id === id ? updatedExpense : e)))
-    apiRequest("POST", "update", { type: "expense", id, data: updates })
-  }
-
-  const deleteExpense = (id: string) => {
-    const expenseToDelete = expenses.find((e) => e.id === id)
-    if (!expenseToDelete) return
-
-    if (expenseToDelete.paymentType === "cash") {
-      setBank((prev) => ({ ...prev, cash: prev.cash + expenseToDelete.amount }))
-    } else {
-      setBank((prev) => ({ ...prev, account: prev.account + expenseToDelete.amount }))
+    const success = await api.updateExpense(apiExpense)
+    if (success) {
+      await loadAllData()
     }
-
-    setExpenses((prev) => prev.filter((e) => e.id !== id))
-    apiRequest("POST", "delete", { type: "expense", id })
   }
 
-  const addSavings = (newSavings: Omit<Savings, "id">) => {
+  const deleteExpense = async (id: string) => {
+    const success = await api.deleteExpense(id)
+    if (success) {
+      await loadAllData()
+    }
+  }
+
+  const addSavings = async (newSavings: Omit<Savings, "id">) => {
     const availableInSource = newSavings.incomeType === "cash" ? bank.cash : bank.account
 
     if (newSavings.currentAmount > availableInSource) {
       throw new Error(`Insufficient funds in ${newSavings.incomeType}. Available: S/. ${availableInSource.toFixed(2)}`)
     }
 
-    const savingsWithId = { ...newSavings, id: Date.now().toString() }
-    setSavings((prev) => [...prev, savingsWithId])
-
-    if (newSavings.currentAmount > 0) {
-      setBank((prev) => ({
-        ...prev,
-        [newSavings.incomeType]: prev[newSavings.incomeType] - newSavings.currentAmount,
-      }))
+    const apiSaving = {
+      goal: newSavings.goal,
+      income_type: newSavings.incomeType,
+      status: newSavings.status,
+      target_amount: newSavings.targetAmount,
+      current_amount: newSavings.currentAmount,
     }
 
-    apiRequest("POST", "create", { type: "savings", data: savingsWithId })
+    const success = await api.createSaving(apiSaving)
+    if (success) {
+      await loadAllData()
+    }
   }
 
-  const updateSavings = (id: string, updates: Partial<Savings>) => {
-    setSavings((prev) => prev.map((s) => (s.id === id ? { ...s, ...updates } : s)))
-    apiRequest("POST", "update", { type: "savings", id, data: updates })
-  }
+  const updateSavings = async (id: string, updates: Partial<Savings>) => {
+    const oldSaving = savings.find((s) => s.id === id)
+    if (!oldSaving) return
 
-  const deleteSavings = (id: string) => {
-    const savingsToDelete = savings.find((s) => s.id === id)
-    if (!savingsToDelete) return
-
-    // Return the current amount back to the bank
-    if (savingsToDelete.currentAmount > 0) {
-      setBank((prev) => ({
-        ...prev,
-        [savingsToDelete.incomeType]: prev[savingsToDelete.incomeType] + savingsToDelete.currentAmount,
-      }))
+    const updatedSaving = { ...oldSaving, ...updates }
+    const apiSaving = {
+      id: updatedSaving.id,
+      goal: updatedSaving.goal,
+      income_type: updatedSaving.incomeType,
+      status: updatedSaving.status,
+      target_amount: updatedSaving.targetAmount,
+      current_amount: updatedSaving.currentAmount,
     }
 
-    setSavings((prev) => prev.filter((s) => s.id !== id))
-    apiRequest("POST", "delete", { type: "savings", id })
+    const success = await api.updateSaving(apiSaving)
+    if (success) {
+      await loadAllData()
+    }
   }
 
-  const addAmountToGoal = (
+  const deleteSavings = async (id: string) => {
+    const success = await api.deleteSaving(id)
+    if (success) {
+      await loadAllData()
+    }
+  }
+
+  const addAmountToGoal = async (
     goalId: string,
     amount: number,
     sourceType: "cash" | "account",
-  ): { success: boolean; message: string } => {
+  ): Promise<{ success: boolean; message: string }> => {
     if (amount <= 0) {
       return { success: false, message: "Amount must be greater than 0" }
     }
@@ -280,26 +307,40 @@ export function DataProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    setBank((prev) => ({
-      ...prev,
-      [sourceType]: prev[sourceType] - amount,
-    }))
-
     const newAmount = goal.currentAmount + amount
     const newStatus = newAmount >= goal.targetAmount ? "completed" : "pending"
-    setSavings((prev) => prev.map((s) => (s.id === goalId ? { ...s, currentAmount: newAmount, status: newStatus } : s)))
+
+    await updateSavings(goalId, { currentAmount: newAmount, status: newStatus as SavingsStatus })
 
     return { success: true, message: "Amount added successfully" }
   }
 
-  const updateSavingsPercentage = (percentage: number) => {
-    setBank((prev) => ({ ...prev, savingsPercentage: percentage }))
-    apiRequest("POST", "update", { type: "bank", data: { savingsPercentage: percentage } })
+  const updateSavingsPercentage = async (percentage: number) => {
+    const apiBank = {
+      id: "SAVE",
+      cash: bank.cash,
+      account: bank.account,
+      savings_percentage: percentage,
+    }
+
+    const success = await api.updateBank(apiBank)
+    if (success) {
+      await loadAllData()
+    }
   }
 
-  const updateBank = (type: "cash" | "account", amount: number) => {
-    setBank((prev) => ({ ...prev, [type]: amount }))
-    apiRequest("POST", "update", { type: "bank", data: { [type]: amount } })
+  const updateBank = async (type: "cash" | "account", amount: number) => {
+    const apiBank = {
+      id: "SAVE",
+      cash: type === "cash" ? amount : bank.cash,
+      account: type === "account" ? amount : bank.account,
+      savings_percentage: bank.savingsPercentage,
+    }
+
+    const success = await api.updateBank(apiBank)
+    if (success) {
+      await loadAllData()
+    }
   }
 
   return (
@@ -322,7 +363,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         updateSavingsPercentage,
         updateBank,
         getTotalBalance,
-        apiRequest,
+        apiRequest: loadAllData,
         isLoading,
       }}
     >
