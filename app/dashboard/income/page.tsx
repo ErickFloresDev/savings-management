@@ -9,12 +9,27 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useData } from "@/lib/data-context"
-import { Plus, Calendar, Wallet, BriefcaseBusiness, DollarSign } from "lucide-react"
+import { Plus, Calendar, Wallet, BriefcaseBusiness, DollarSign, Pencil, Trash2, EllipsisVertical } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { useToast } from "@/hooks/use-toast"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 export default function IncomePage() {
-  const { income, addIncome } = useData()
+  const { income, addIncome, updateIncome, deleteIncome } = useData()
   const [open, setOpen] = useState(false)
+  const [editingIncome, setEditingIncome] = useState<string | null>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const { toast } = useToast()
 
   const [visibleCount, setVisibleCount] = useState(5)
 
@@ -27,12 +42,32 @@ export default function IncomePage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    addIncome({
-      date: formData.date,
-      incomeType: formData.incomeType,
-      amount: Number.parseFloat(formData.amount),
-      category: formData.category,
-    })
+
+    if (editingIncome) {
+      updateIncome(editingIncome, {
+        date: formData.date,
+        incomeType: formData.incomeType,
+        amount: Number.parseFloat(formData.amount),
+        category: formData.category,
+      })
+      toast({
+        title: "Income updated",
+        description: "Income has been updated successfully",
+      })
+      setEditingIncome(null)
+    } else {
+      addIncome({
+        date: formData.date,
+        incomeType: formData.incomeType,
+        amount: Number.parseFloat(formData.amount),
+        category: formData.category,
+      })
+      toast({
+        title: "Income added",
+        description: "Income has been added successfully",
+      })
+    }
+
     setFormData({
       date: new Date().toISOString().split("T")[0],
       incomeType: "account",
@@ -40,6 +75,28 @@ export default function IncomePage() {
       category: "salary",
     })
     setOpen(false)
+  }
+
+  const handleEdit = (item: any) => {
+    setEditingIncome(item.id)
+    setFormData({
+      date: item.date,
+      incomeType: item.incomeType,
+      amount: item.amount.toString(),
+      category: item.category,
+    })
+    setOpen(true)
+  }
+
+  const handleDelete = () => {
+    if (deleteId) {
+      deleteIncome(deleteId)
+      toast({
+        title: "Income deleted",
+        description: "Income has been deleted successfully",
+      })
+      setDeleteId(null)
+    }
   }
 
   const sortedIncome = [...income].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -51,7 +108,21 @@ export default function IncomePage() {
           <h1 className="text-xl font-semibold mb-1">Income</h1>
           <p className="text-sm text-muted-foreground">Track your income sources</p>
         </div>
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog
+          open={open}
+          onOpenChange={(isOpen) => {
+            setOpen(isOpen)
+            if (!isOpen) {
+              setEditingIncome(null)
+              setFormData({
+                date: new Date().toISOString().split("T")[0],
+                incomeType: "account",
+                amount: "",
+                category: "salary",
+              })
+            }
+          }}
+        >
           <DialogTrigger asChild>
             <Button size="sm" className="gap-2 text-sm">
               <Plus className="h-4 w-4" />
@@ -60,7 +131,7 @@ export default function IncomePage() {
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle className="text-base">Add Income</DialogTitle>
+              <DialogTitle className="text-base">{editingIncome ? "Edit Income" : "Add Income"}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
@@ -133,7 +204,7 @@ export default function IncomePage() {
                 </Select>
               </div>
               <Button type="submit" className="w-full text-sm">
-                Add Income
+                {editingIncome ? "Update Income" : "Add Income"}
               </Button>
             </form>
           </DialogContent>
@@ -157,7 +228,11 @@ export default function IncomePage() {
           </CardHeader>
           <CardContent>
             <div className="text-xl font-semibold">
-              S/. {income .filter((i) => i.category === "salary") .reduce((sum, i) => sum + i.amount, 0) .toFixed(2)}
+              S/.{" "}
+              {income
+                .filter((i) => i.category === "salary")
+                .reduce((sum, i) => sum + i.amount, 0)
+                .toFixed(2)}
             </div>
           </CardContent>
         </Card>
@@ -168,7 +243,11 @@ export default function IncomePage() {
           </CardHeader>
           <CardContent>
             <div className="text-xl font-semibold">
-              S/. {income .filter((i) => i.category === "other") .reduce((sum, i) => sum + i.amount, 0) .toFixed(2)}
+              S/.{" "}
+              {income
+                .filter((i) => i.category === "other")
+                .reduce((sum, i) => sum + i.amount, 0)
+                .toFixed(2)}
             </div>
           </CardContent>
         </Card>
@@ -180,9 +259,7 @@ export default function IncomePage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {sortedIncome
-              .slice(0, visibleCount)
-              .map((item) => (
+            {sortedIncome.slice(0, visibleCount).map((item) => (
               <div key={item.id} className="flex items-center justify-between pb-3 border-b last:border-0 last:pb-0">
                 <div className="flex items-start gap-3">
                   <div className="mt-1">
@@ -200,25 +277,74 @@ export default function IncomePage() {
                     <p className="text-xs text-muted-foreground capitalize">{item.incomeType}</p>
                   </div>
                 </div>
-                <p className="text-sm font-semibold">S/. {item.amount.toFixed(2)}</p>
+                <div className="flex items-center gap-3">
+                  <p className="text-sm font-semibold">S/. {item.amount.toFixed(2)}</p>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                      >
+                        <EllipsisVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent align="end" className="w-36">
+
+                      {/* Edit */}
+                      <DropdownMenuItem onClick={() => handleEdit(item)}>
+                        <Pencil className="mr-2 h-4 w-4" />
+                        Edit
+                      </DropdownMenuItem>
+
+                      <DropdownMenuSeparator />
+
+                      {/* Delete */}
+                      <DropdownMenuItem
+                        onClick={() => setDeleteId(item.id)}
+                        className="text-destructive focus:text-destructive"
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete
+                      </DropdownMenuItem>
+
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
             ))}
           </div>
 
           {visibleCount < sortedIncome.length && (
             <div className="pt-2 text-center">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setVisibleCount((prev) => prev + 5)}
-              >
+              <Button variant="ghost" size="sm" onClick={() => setVisibleCount((prev) => prev + 5)}>
                 Ver más
               </Button>
             </div>
           )}
-
         </CardContent>
       </Card>
+
+      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this income entry and adjust your bank balance.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-white hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

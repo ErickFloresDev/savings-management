@@ -57,6 +57,10 @@ export default function BankPage() {
               <p className="text-muted-foreground">Account</p>
               <p className="font-semibold">S/. {bank.account.toFixed(2)}</p>
             </div>
+            <div>
+              <p className="text-muted-foreground">Savings %</p>
+              <p className="font-semibold">{bank.savingsPercentage}%</p>
+            </div>
           </div>
         </CardContent>
       </Card>

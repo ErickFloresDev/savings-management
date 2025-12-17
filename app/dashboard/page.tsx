@@ -160,7 +160,7 @@ export default function DashboardPage() {
               <div key={goal.id} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium">{goal.goal}</p>
+                    <p className="text-sm font-medium line-clamp-1">{goal.goal}</p>
                     <p className="text-xs text-muted-foreground">
                       {goal.incomeType} • {goal.status}
                     </p>

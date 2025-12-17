@@ -30,7 +30,7 @@ export function NavBar() {
               priority
             />
             <span className="font-semibold text-lg line-clamp-1">
-              Savings Manager
+              Save me
             </span>
           </Link>
 
