@@ -130,7 +130,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         })
       }
     } catch (error) {
-      console.error("[v0] Error loading data:", error)
+      //console.error("[v0] Error loading data:", error)
     } finally {
       setIsLoading(false)
     }
@@ -189,13 +189,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
       category: newExpense.category,
     }
 
-    console.log("[v0] Creating expense:", apiExpense)
-    console.log("[v0] Balance before expense - Cash:", bank.cash, "Account:", bank.account)
+    //console.log("[v0] Creating expense:", apiExpense)
+    //console.log("[v0] Balance before expense - Cash:", bank.cash, "Account:", bank.account)
 
     const success = await api.createExpense(apiExpense)
     if (success) {
       await loadAllData()
-      console.log("[v0] Balance after expense - Cash:", bank.cash, "Account:", bank.account)
+      //console.log("[v0] Balance after expense - Cash:", bank.cash, "Account:", bank.account)
     }
   }
 

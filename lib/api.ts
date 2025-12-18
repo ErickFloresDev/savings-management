@@ -52,10 +52,10 @@ export async function fetchIncome(): Promise<ApiIncome[]> {
       method: "GET",
     })
     const data: ApiResponse<ApiIncome[]> = await response.json()
-    console.log("[v0] Fetched income:", data)
+    //console.log("[v0] Fetched income:", data)
     return data.success ? data.data : []
   } catch (error) {
-    console.error("[v0] Error fetching income:", error)
+    //console.error("[v0] Error fetching income:", error)
     return []
   }
 }
@@ -66,10 +66,10 @@ export async function fetchExpenses(): Promise<ApiExpense[]> {
       method: "GET",
     })
     const data: ApiResponse<ApiExpense[]> = await response.json()
-    console.log("[v0] Fetched expenses:", data)
+    //console.log("[v0] Fetched expenses:", data)
     return data.success ? data.data : []
   } catch (error) {
-    console.error("[v0] Error fetching expenses:", error)
+    //console.error("[v0] Error fetching expenses:", error)
     return []
   }
 }
@@ -80,10 +80,10 @@ export async function fetchSavings(): Promise<ApiSaving[]> {
       method: "GET",
     })
     const data: ApiResponse<ApiSaving[]> = await response.json()
-    console.log("[v0] Fetched savings:", data)
+    //console.log("[v0] Fetched savings:", data)
     return data.success ? data.data : []
   } catch (error) {
-    console.error("[v0] Error fetching savings:", error)
+    //console.error("[v0] Error fetching savings:", error)
     return []
   }
 }
@@ -94,10 +94,10 @@ export async function fetchBank(): Promise<ApiBank | null> {
       method: "GET",
     })
     const data: ApiResponse<ApiBank[]> = await response.json()
-    console.log("[v0] Fetched bank:", data)
+    //console.log("[v0] Fetched bank:", data)
     return data.success && data.data.length > 0 ? data.data[0] : null
   } catch (error) {
-    console.error("[v0] Error fetching bank:", error)
+    //console.error("[v0] Error fetching bank:", error)
     return null
   }
 }
@@ -121,10 +121,10 @@ export async function createIncome(income: Omit<ApiIncome, "id">): Promise<boole
         category: income.category,
       }),
     })
-    console.log("[v0] Created income (no-cors mode)")
+    //console.log("[v0] Created income (no-cors mode)")
     return true
   } catch (error) {
-    console.error("[v0] Error creating income:", error)
+    //console.error("[v0] Error creating income:", error)
     return false
   }
 }
@@ -147,10 +147,10 @@ export async function createExpense(expense: Omit<ApiExpense, "id">): Promise<bo
         category: expense.category,
       }),
     })
-    console.log("[v0] Created expense (no-cors mode)")
+    //console.log("[v0] Created expense (no-cors mode)")
     return true
   } catch (error) {
-    console.error("[v0] Error creating expense:", error)
+    //console.error("[v0] Error creating expense:", error)
     return false
   }
 }
@@ -174,10 +174,10 @@ export async function createSaving(saving: Omit<ApiSaving, "id">): Promise<boole
         current_amount: saving.current_amount,
       }),
     })
-    console.log("[v0] Created saving (no-cors mode)")
+    //console.log("[v0] Created saving (no-cors mode)")
     return true
   } catch (error) {
-    console.error("[v0] Error creating saving:", error)
+    //console.error("[v0] Error creating saving:", error)
     return false
   }
 }
@@ -202,10 +202,10 @@ export async function updateIncome(income: ApiIncome): Promise<boolean> {
         category: income.category,
       }),
     })
-    console.log("[v0] Updated income (no-cors mode)")
+    //console.log("[v0] Updated income (no-cors mode)")
     return true
   } catch (error) {
-    console.error("[v0] Error updating income:", error)
+    //console.error("[v0] Error updating income:", error)
     return false
   }
 }
@@ -229,10 +229,10 @@ export async function updateExpense(expense: ApiExpense): Promise<boolean> {
         category: expense.category,
       }),
     })
-    console.log("[v0] Updated expense (no-cors mode)")
+    //console.log("[v0] Updated expense (no-cors mode)")
     return true
   } catch (error) {
-    console.error("[v0] Error updating expense:", error)
+    //console.error("[v0] Error updating expense:", error)
     return false
   }
 }
@@ -257,10 +257,10 @@ export async function updateSaving(saving: ApiSaving): Promise<boolean> {
         current_amount: saving.current_amount,
       }),
     })
-    console.log("[v0] Updated saving (no-cors mode)")
+    //console.log("[v0] Updated saving (no-cors mode)")
     return true
   } catch (error) {
-    console.error("[v0] Error updating saving:", error)
+    //console.error("[v0] Error updating saving:", error)
     return false
   }
 }
@@ -283,10 +283,10 @@ export async function updateBank(bank: ApiBank): Promise<boolean> {
         savings_percentage: bank.savings_percentage,
       }),
     })
-    console.log("[v0] Updated bank (no-cors mode)")
+    //console.log("[v0] Updated bank (no-cors mode)")
     return true
   } catch (error) {
-    console.error("[v0] Error updating bank:", error)
+    //console.error("[v0] Error updating bank:", error)
     return false
   }
 }
@@ -307,10 +307,10 @@ export async function deleteIncome(id: string): Promise<boolean> {
         id: id,
       }),
     })
-    console.log("[v0] Deleted income (no-cors mode)")
+    //console.log("[v0] Deleted income (no-cors mode)")
     return true
   } catch (error) {
-    console.error("[v0] Error deleting income:", error)
+    //console.error("[v0] Error deleting income:", error)
     return false
   }
 }
@@ -330,10 +330,10 @@ export async function deleteExpense(id: string): Promise<boolean> {
         id: id,
       }),
     })
-    console.log("[v0] Deleted expense (no-cors mode)")
+    //console.log("[v0] Deleted expense (no-cors mode)")
     return true
   } catch (error) {
-    console.error("[v0] Error deleting expense:", error)
+    //console.error("[v0] Error deleting expense:", error)
     return false
   }
 }
@@ -353,10 +353,10 @@ export async function deleteSaving(id: string): Promise<boolean> {
         id: id,
       }),
     })
-    console.log("[v0] Deleted saving (no-cors mode)")
+    //console.log("[v0] Deleted saving (no-cors mode)")
     return true
   } catch (error) {
-    console.error("[v0] Error deleting saving:", error)
+    //console.error("[v0] Error deleting saving:", error)
     return false
   }
 }

@@ -15,14 +15,18 @@ export default function BankPage() {
   
   // ADD THESE CALCULATIONS
   const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0)
-  const totalSavings = savings.reduce((sum, s) => sum + s.currentAmount, 0)
+  const totalSavings = savings.reduce((sum, s) => sum + Number(s.currentAmount || 0),0)
   const currentBalance = totalIncome - totalExpenses - totalSavings
   
   // Calculate expenses and savings by payment type
   const cashExpenses = expenses.filter((e) => e.paymentType === "cash").reduce((sum, e) => sum + e.amount, 0)
   const accountExpenses = expenses.filter((e) => e.paymentType === "account").reduce((sum, e) => sum + e.amount, 0)
-  const cashSavings = savings.filter((s) => s.incomeType === "cash").reduce((sum, s) => sum + s.currentAmount, 0)
-  const accountSavings = savings.filter((s) => s.incomeType === "account").reduce((sum, s) => sum + s.currentAmount, 0)
+  const cashSavings = savings
+  .filter((s) => s.incomeType === "cash")
+  .reduce((sum, s) => sum + Number(s.currentAmount || 0), 0)
+  const accountSavings = savings
+  .filter((s) => s.incomeType === "account")
+  .reduce((sum, s) => sum + Number(s.currentAmount || 0), 0)
   
   // Calculate current balances by type
   const cashBalance = cashIncome - cashExpenses - cashSavings

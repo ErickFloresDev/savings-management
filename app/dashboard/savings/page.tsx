@@ -24,6 +24,9 @@ import {
   EllipsisVertical,
   RotateCcw,
   CircleCheckBig,
+  TrendingDown,
+  PiggyBank,
+  DollarSign,
 } from "lucide-react"
 import {
   Dialog,
@@ -500,14 +503,20 @@ export default function SavingsPage() {
           <AccordionItem value="income" className="border-none">
             <Card className="py-4">
               <AccordionTrigger className="px-6 py-0">
-                <span className="text-sm font-medium">Savings Summary</span>
+                <div className="flex flex-row justify-between items-center">
+                  <PiggyBank className="h-4 w-4 text-gray-600 mr-2"/>
+                  <span className="text-sm text-black font-semibold">Savings Summary</span>
+                </div>
               </AccordionTrigger>
 
               <AccordionContent>
                 <CardContent className="space-y-4 pt-4">
                   {/* Total Saved */}
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Total Saved</span>
+                    <div className="flex flex-row justify-between items-center">
+                      <DollarSign className="h-4 w-4 text-muted-foreground mr-2"/>
+                      <span className="text-sm text-muted-foreground">Total Saved</span>
+                    </div>
                     <span className="text-sm">
                       S/. {Number(totalSaved).toFixed(2)}
                     </span>
@@ -515,7 +524,10 @@ export default function SavingsPage() {
                   <Separator className="my-4" />
                   {/* Completed Goals */}
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Completed Goals</span>
+                    <div className="flex flex-row justify-between items-center">
+                      <CircleCheckBig className="h-4 w-4 text-muted-foreground mr-2"/>
+                      <span className="text-sm text-muted-foreground">Completed Goals</span>
+                    </div>
                     <span className="text-sm">
                       {completedGoals}
                     </span>
@@ -523,7 +535,10 @@ export default function SavingsPage() {
                   <Separator className="my-4" />
                   {/* Overall Progress */}
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Overall Progress</span>
+                    <div className="flex flex-row justify-between items-center">
+                      <TrendingUp className="h-4 w-4 text-muted-foreground mr-2"/>
+                      <span className="text-sm text-muted-foreground">Overall Progress</span>
+                    </div>
                     <span className="text-sm">
                       {totalTarget > 0 ? ((totalSaved / totalTarget) * 100).toFixed(0) : 0}%
                     </span>
@@ -616,7 +631,7 @@ export default function SavingsPage() {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm font-medium">
-                      S/. {Number(goal.currentAmount ?? 0).toFixed(2)} / S/. {Number(goal.targetAmount ?? 0).toFixed(2)}
+                      S/. {Number(goal.currentAmount ?? 0).toFixed(2)} - S/. {Number(goal.targetAmount ?? 0).toFixed(2)}
                     </p>
                     <p className="text-sm font-semibold">{progress.toFixed(0)}%</p>
                   </div>

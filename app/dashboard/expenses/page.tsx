@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useData } from "@/lib/data-context"
-import { Plus, Calendar, HandCoins, ShoppingCart, Car, Pencil, Trash2, EllipsisVertical } from "lucide-react"
+import { Plus, Calendar, HandCoins, ShoppingCart, Car, Pencil, Trash2, EllipsisVertical, TrendingDown, Wallet, TvMinimalPlay, NotepadText } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import {
   AlertDialog,
@@ -232,7 +232,7 @@ export default function ExpensesPage() {
             <HandCoins className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-semibold">S/. {expenses.reduce((sum, e) => sum + e.amount, 0).toFixed(2)}</div>
+            <div className="text-xl font-semibold">-S/. {expenses.reduce((sum, e) => sum + e.amount, 0).toFixed(2)}</div>
           </CardContent>
         </Card>
         <Card className="gap-0">
@@ -242,7 +242,7 @@ export default function ExpensesPage() {
           </CardHeader>
           <CardContent>
             <div className="text-xl font-semibold">
-              S/.{" "}
+              -S/.{" "}
               {expenses
                 .filter((e) => e.category === "shopping")
                 .reduce((sum, e) => sum + e.amount, 0)
@@ -257,7 +257,7 @@ export default function ExpensesPage() {
           </CardHeader>
           <CardContent>
             <div className="text-xl font-semibold">
-              S/.{" "}
+              -S/.{" "}
               {expenses
                 .filter((e) => e.category === "transportation")
                 .reduce((sum, e) => sum + e.amount, 0)
@@ -266,12 +266,13 @@ export default function ExpensesPage() {
           </CardContent>
         </Card>
         <Card className="gap-0">
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Entertainment</CardTitle>
+            <TvMinimalPlay className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-xl font-semibold">
-              S/.{" "}
+              -S/.{" "}
               {expenses
                 .filter((e) => e.category === "entertainment")
                 .reduce((sum, e) => sum + e.amount, 0)
@@ -286,24 +287,33 @@ export default function ExpensesPage() {
           <AccordionItem value="income" className="border-none">
             <Card className="py-4">
               <AccordionTrigger className="px-6 py-0">
-                <span className="text-sm font-medium">Expense Summary</span>
+                <div className="flex flex-row justify-between items-center">
+                  <TrendingDown  className="h-4 w-4 text-gray-600 mr-2"/>
+                  <span className="text-sm text-black font-semibold">Expense Summary</span>
+                </div>
               </AccordionTrigger>
 
               <AccordionContent>
                 <CardContent className="space-y-4 pt-4">
                   {/* Total Income */}
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Total Expenses</span>
+                    <div className="flex flex-row justify-between items-center">
+                      <HandCoins  className="h-4 w-4 text-muted-foreground mr-2"/>
+                      <span className="text-sm text-muted-foreground">Total Expenses</span>
+                    </div>
                     <span className="text-sm">
-                      S/. {expenses.reduce((sum, e) => sum + e.amount, 0).toFixed(2)}
+                      -S/. {expenses.reduce((sum, e) => sum + e.amount, 0).toFixed(2)}
                     </span>
                   </div>
                   <Separator className="my-4" />
                   {/* Salary Income */}
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Shopping</span>
+                    <div className="flex flex-row justify-between items-center">
+                      <ShoppingCart  className="h-4 w-4 text-muted-foreground mr-2"/>
+                      <span className="text-sm text-muted-foreground">Shopping</span>
+                    </div>
                     <span className="text-sm">
-                      S/.{" "}
+                      -S/.{" "}
                       {expenses
                         .filter((e) => e.category === "shopping")
                         .reduce((sum, e) => sum + e.amount, 0)
@@ -313,9 +323,12 @@ export default function ExpensesPage() {
                   <Separator className="my-4" />
                   {/* Other Income */}
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Transportation</span>
+                    <div className="flex flex-row justify-between items-center">
+                      <Car  className="h-4 w-4 text-muted-foreground mr-2"/>
+                      <span className="text-sm text-muted-foreground">Transportation</span>
+                    </div>
                     <span className="text-sm">
-                      S/.{" "}
+                      -S/.{" "}
                       {expenses
                         .filter((e) => e.category === "transportation")
                         .reduce((sum, e) => sum + e.amount, 0)
@@ -325,9 +338,12 @@ export default function ExpensesPage() {
                   <Separator className="my-4" />
                   {/* Other Income */}
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Entertainment</span>
+                    <div className="flex flex-row justify-between items-center">
+                      <TvMinimalPlay   className="h-4 w-4 text-muted-foreground mr-2"/>
+                      <span className="text-sm text-muted-foreground">Entertainment</span>
+                    </div>
                     <span className="text-sm">
-                      S/.{" "}
+                      -S/.{" "}
                       {expenses
                         .filter((e) => e.category === "entertainment")
                         .reduce((sum, e) => sum + e.amount, 0)
@@ -342,14 +358,15 @@ export default function ExpensesPage() {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Expense History</CardTitle>
+        <CardHeader className="flex items-center">
+            <NotepadText className="h-4 w-4 text-gray-600 mr-1"/>
+            <CardTitle className="text-sm lg:text-lg font-semibold lg:font-medium">Expense History</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {sortedExpenses.slice(0, visibleCount).map((item) => (
               <div key={item.id} className="flex items-center justify-between pb-3 border-b last:border-0 last:pb-0">
-                <div className="flex items-start gap-3">
+                <div className="flex items-center gap-3">
                   <div className="mt-1">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
                   </div>
@@ -366,7 +383,7 @@ export default function ExpensesPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <p className="text-sm font-semibold">S/. {item.amount.toFixed(2)}</p>
+                  <p className="text-sm font-semibold text-red-500">-S/. {item.amount.toFixed(2)}</p>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button

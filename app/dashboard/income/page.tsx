@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useData } from "@/lib/data-context"
-import { Plus, Calendar, Wallet, BriefcaseBusiness, DollarSign, Pencil, Trash2, EllipsisVertical } from "lucide-react"
+import { Plus, Calendar, Wallet, BriefcaseBusiness, DollarSign, Pencil, Trash2, EllipsisVertical, RefreshCw, TrendingUp, ReceiptText, NotepadText } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import {
   AlertDialog,
@@ -217,10 +217,10 @@ export default function IncomePage() {
         <Card className="gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Income</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-semibold">S/. {income.reduce((sum, i) => sum + i.amount, 0).toFixed(2)}</div>
+            <div className="text-xl font-semibold">+S/. {income.reduce((sum, i) => sum + i.amount, 0).toFixed(2)}</div>
           </CardContent>
         </Card>
         <Card className="gap-0">
@@ -230,7 +230,7 @@ export default function IncomePage() {
           </CardHeader>
           <CardContent>
             <div className="text-xl font-semibold">
-              S/.{" "}
+              +S/.{" "}
               {income
                 .filter((i) => i.category === "salary")
                 .reduce((sum, i) => sum + i.amount, 0)
@@ -241,11 +241,11 @@ export default function IncomePage() {
         <Card className="gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Other Income</CardTitle>
-            <Wallet className="h-4 w-4 text-muted-foreground" />
+            <RefreshCw className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-xl font-semibold">
-              S/.{" "}
+              +S/.{" "}
               {income
                 .filter((i) => i.category === "other")
                 .reduce((sum, i) => sum + i.amount, 0)
@@ -260,24 +260,33 @@ export default function IncomePage() {
           <AccordionItem value="income" className="border-none">
             <Card className="py-4">
               <AccordionTrigger className="px-6 py-0">
-                <span className="text-sm font-medium">Income Summary</span>
+                <div className="flex flex-row justify-between items-center">
+                  <TrendingUp  className="h-4 w-4 text-gray-600 mr-2"/>
+                  <span className="text-sm text-black font-semibold">Income Summary</span>
+                </div>
               </AccordionTrigger>
 
               <AccordionContent>
                 <CardContent className="space-y-4 pt-4">
                   {/* Total Income */}
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Total Income</span>
+                    <div className="flex flex-row justify-between items-center">
+                      <Wallet  className="h-4 w-4 text-muted-foreground mr-2"/>
+                      <span className="text-sm text-muted-foreground">Total Income</span>
+                    </div>
                     <span className="text-sm">
-                      S/. {income.reduce((sum, i) => sum + i.amount, 0).toFixed(2)}
+                      +S/. {income.reduce((sum, i) => sum + i.amount, 0).toFixed(2)}
                     </span>
                   </div>
                   <Separator className="my-4" />
                   {/* Salary Income */}
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Salary Income</span>
+                    <div className="flex flex-row justify-between items-center">
+                      <BriefcaseBusiness  className="h-4 w-4 text-muted-foreground mr-2"/>
+                      <span className="text-sm text-muted-foreground">Salary Income</span>
+                    </div>
                     <span className="text-sm">
-                      S/.{" "}
+                      +S/.{" "}
                       {income
                         .filter((i) => i.category === "salary")
                         .reduce((sum, i) => sum + i.amount, 0)
@@ -287,9 +296,12 @@ export default function IncomePage() {
                   <Separator className="my-4" />
                   {/* Other Income */}
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Other Income</span>
+                    <div className="flex flex-row justify-between items-center">
+                      <RefreshCw  className="h-4 w-4 text-muted-foreground mr-2"/>
+                      <span className="text-sm text-muted-foreground">Other Income</span>
+                    </div>
                     <span className="text-sm">
-                      S/.{" "}
+                      +S/.{" "}
                       {income
                         .filter((i) => i.category === "other")
                         .reduce((sum, i) => sum + i.amount, 0)
@@ -304,15 +316,16 @@ export default function IncomePage() {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Income History</CardTitle>
+        <CardHeader className="flex items-center">
+            <NotepadText className="h-4 w-4 text-gray-600 mr-1"/>
+            <CardTitle className="text-sm lg:text-lg font-semibold lg:font-medium">Income History</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {sortedIncome.slice(0, visibleCount).map((item) => (
               <div key={item.id} className="flex items-center justify-between pb-3 border-b last:border-0 last:pb-0">
-                <div className="flex items-start gap-3">
-                  <div className="mt-1">
+                <div className="flex items-center gap-3">
+                  <div className="mt-0">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
                   </div>
                   <div>
@@ -328,7 +341,7 @@ export default function IncomePage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <p className="text-sm font-none lg:font-semibold">S/. {item.amount.toFixed(2)}</p>
+                  <p className="text-sm text-green-600 font-semibold">+S/. {item.amount.toFixed(2)}</p>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
