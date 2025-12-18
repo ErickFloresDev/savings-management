@@ -83,7 +83,7 @@ export default function DashboardPage() {
 
         <Card className="hidden lg:block gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Active Goals</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Goals</CardTitle>
             <PiggyBank className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -134,10 +134,10 @@ export default function DashboardPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <PiggyBank className="h-4 w-4 text-muted-foreground mr-2"/>
-                      <span className="text-sm text-muted-foreground">Active Goals</span>
+                      <span className="text-sm text-muted-foreground">Total Goals</span>
                     </div>
-                    <span className="text-sm text-sky-600 font-semibold">
-                      {activeSavings.length}
+                    <span className="text-sm text-orange-600 font-semibold">
+                      -S/.{totalSavings.toFixed(2)}
                     </span>
                   </div>
                 </CardContent>
