@@ -27,7 +27,7 @@ export default function DashboardPage() {
   const [expensesVisible, setExpensesVisible] = useState(3)
 
   // ADD THESE CALCULATIONS
-  const totalSavings = savings.reduce((sum, s) => sum + s.currentAmount, 0)
+  const totalSavings = savings.reduce((sum, s) => sum + Number(s.currentAmount || 0), 0)
   const currentBalance = totalIncome - totalExpenses - totalSavings
 
   return (
@@ -87,7 +87,7 @@ export default function DashboardPage() {
             <PiggyBank className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-semibold text-sky-600">{activeSavings.length}</div>
+            <div className="text-xl font-semibold text-orange-600">-S/.{totalSavings.toFixed(2)}</div>
             <p className="text-xs text-muted-foreground mt-1">
               {savings.filter((s) => s.status === "completed").length} completed
             </p>

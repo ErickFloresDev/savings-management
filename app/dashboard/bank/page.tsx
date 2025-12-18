@@ -80,8 +80,10 @@ export default function BankPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-sm text-muted-foreground mb-1">Total Income</p>
-              <p className="text-2xl font-semibold">S/. {cashIncome.toFixed(2)}</p>
+              <p className="text-sm text-muted-foreground mb-1">Total Balance</p>
+              <p className={`text-2xl font-semibold ${cashBalance >= 0 ? 'text-gray-600' : 'text-red-600'}`}>
+                S/. {cashBalance.toFixed(2)}
+              </p>
             </div>
             <div className="pt-4 border-t space-y-3">
               <div className="grid grid-cols-3 gap-2 text-sm mb-3">
@@ -94,10 +96,8 @@ export default function BankPage() {
                   <p className="font-semibold text-orange-600">-S/. {cashSavings.toFixed(2)}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground text-xs">Balance</p>
-                  <p className={`font-semibold ${cashBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    S/. {cashBalance.toFixed(2)}
-                  </p>
+                  <p className="text-muted-foreground text-xs">Income</p>
+                  <p className="font-semibold text-green-600">+S/. {cashIncome.toFixed(2)}</p>
                 </div>
               </div>
               <div className="flex items-center justify-between text-sm">
@@ -124,8 +124,10 @@ export default function BankPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-sm text-muted-foreground mb-1">Total Income</p>
-              <p className="text-2xl font-semibold">S/. {accountIncome.toFixed(2)}</p>
+              <p className="text-sm text-muted-foreground mb-1">Total Balance</p>
+              <p className={`text-2xl font-semibold ${accountBalance >= 0 ? 'text-gray-600' : 'text-red-600'}`}>
+                S/. {accountBalance.toFixed(2)}
+              </p>
             </div>
             <div className="pt-4 border-t space-y-3">
               <div className="grid grid-cols-3 gap-2 text-sm mb-3">
@@ -138,10 +140,8 @@ export default function BankPage() {
                   <p className="font-semibold text-orange-600">-S/. {accountSavings.toFixed(2)}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground text-xs">Balance</p>
-                  <p className={`font-semibold ${accountBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    S/. {accountBalance.toFixed(2)}
-                  </p>
+                  <p className="text-muted-foreground text-xs">Income</p>
+                  <p className="font-semibold text-green-600">+S/. {accountIncome.toFixed(2)}</p>
                 </div>
               </div>
               <div className="flex items-center justify-between text-sm">
@@ -218,7 +218,7 @@ export default function BankPage() {
                           {new Date(item.date).toLocaleDateString()} • {item.incomeType}
                         </p>
                       </div>
-                      <p className="text-sm font-semibold text-foreground">+S/{item.amount.toFixed(2)}</p>
+                      <p className="text-sm font-semibold text-green-600">+S/{item.amount.toFixed(2)}</p>
                     </div>
                   ))}
 
