@@ -24,6 +24,10 @@ export default function DashboardPage() {
   const [incomeVisible, setIncomeVisible] = useState(3)
   const [expensesVisible, setExpensesVisible] = useState(3)
 
+  // ADD THESE CALCULATIONS
+  const totalSavings = savings.reduce((sum, s) => sum + s.currentAmount, 0)
+  const currentBalance = totalIncome - totalExpenses - totalSavings
+
   return (
     <div className="container mx-auto max-w-7xl space-y-6">
       <div>
@@ -41,7 +45,18 @@ export default function DashboardPage() {
         </Alert>
       )}
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card className="gap-0">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Current account</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-xl font-semibold">S/. {currentBalance.toFixed(2)} </div>
+            <p className="text-xs text-muted-foreground mt-1">Current money</p>
+          </CardContent>
+        </Card>
+
         <Card className="gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Income</CardTitle>
