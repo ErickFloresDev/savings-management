@@ -28,10 +28,10 @@ export function MobileNav() {
               href={link.href}
               className={cn(
                 "flex flex-col items-center justify-center gap-1 flex-1 h-full",
-                isActive ? "text-foreground" : "text-muted-foreground",
+                isActive ? "text-foreground font-extrabold" : "text-muted-foreground",
               )}
             >
-              <Icon className="h-5 w-5" />
+              <Icon className="h-5 w-5"/>
               <span className="text-xs">{link.label}</span>
             </Link>
           )

@@ -2,14 +2,14 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useData } from "@/lib/data-context"
-import { Plus, Calendar, HandCoins, ShoppingCart, Car, Pencil, Trash2, EllipsisVertical, TrendingDown, Wallet, TvMinimalPlay, NotepadText } from "lucide-react"
+import { Plus, Calendar, HandCoins, ShoppingCart, Car, Pencil, Trash2, EllipsisVertical, TrendingDown, Wallet, TvMinimalPlay, NotepadText, DollarSign } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import {
   AlertDialog,
@@ -27,7 +27,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Separator } from "@/components/ui/separator"
 
 export default function ExpensesPage() {
-  const { expenses, addExpense, updateExpense, deleteExpense } = useData()
+  const { expenses, income, savings, addExpense, updateExpense, deleteExpense } = useData()
   const [open, setOpen] = useState(false)
   const [editingExpense, setEditingExpense] = useState<string | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
@@ -41,6 +41,11 @@ export default function ExpensesPage() {
     amount: "",
     category: "shopping" as "shopping" | "transportation" | "entertainment",
   })
+
+  const totalIncome = income.reduce((sum, i) => sum + i.amount, 0)
+  const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0)
+  const totalSavings = savings.reduce((sum, s) => sum + Number(s.currentAmount || 0), 0)
+  const currentBalance = totalIncome - totalExpenses - totalSavings
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -106,6 +111,46 @@ export default function ExpensesPage() {
       })
       setDeleteId(null)
     }
+  }
+
+  // Agregar este useMemo después de tus estados, similar a savings page
+  const balances = useMemo(() => {
+    const calculateBalance = (type: "cash" | "account") => {
+      const totalIncome = income
+        .filter(i => i.incomeType === type)
+        .reduce((sum, i) => sum + i.amount, 0)
+      
+      const totalExpenses = expenses
+        .filter(e => e.paymentType === type)
+        .reduce((sum, e) => sum + e.amount, 0)
+      
+      const totalSavings = savings
+        .filter(s => s.incomeType === type)
+        .reduce((sum, s) => sum + s.currentAmount, 0)
+      
+      return totalIncome - totalExpenses - totalSavings
+    }
+    
+    const cash = calculateBalance("cash")
+    const account = calculateBalance("account")
+    
+    return {
+      cash,
+      account
+    }
+  }, [income, expenses, savings])
+
+  // Agregar esta validación en handleSubmit, antes de addExpense o updateExpense
+  const amount = Number.parseFloat(formData.amount)
+  const availableBalance = formData.paymentType === "cash" ? balances.cash : balances.account
+
+  if (amount > availableBalance) {
+    toast({
+      title: "Error",
+      description: `Insufficient funds in ${formData.paymentType}. Available: S/. ${availableBalance.toFixed(2)}`,
+      variant: "destructive",
+    })
+    return
   }
 
   const sortedExpenses = [...expenses].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -181,10 +226,16 @@ export default function ExpensesPage() {
                 <Label htmlFor="amount" className="text-sm">
                   Amount
                 </Label>
+                <div className="text-xs text-muted-foreground mb-1">
+                  Available in {formData.paymentType}: S/.{" "}
+                  {(formData.paymentType === "cash" ? balances.cash : balances.account).toFixed(2)}
+                </div>
                 <Input
                   id="amount"
                   type="number"
                   step="0.01"
+                  min="0"
+                  max={formData.paymentType === "cash" ? balances.cash : balances.account}
                   value={formData.amount}
                   onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                   required
@@ -288,17 +339,29 @@ export default function ExpensesPage() {
             <Card className="py-4">
               <AccordionTrigger className="px-6 py-0">
                 <div className="flex flex-row justify-between items-center">
-                  <TrendingDown  className="h-4 w-4 text-gray-600 mr-2"/>
+                  <TrendingDown className="h-4 w-4 text-gray-600 mr-2" />
                   <span className="text-sm text-black font-semibold">Expense Summary</span>
                 </div>
               </AccordionTrigger>
 
               <AccordionContent>
                 <CardContent className="space-y-4 pt-4">
+                  {/* Current account */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-row justify-between items-center">
+                      <DollarSign className="h-4 w-4 text-muted-foreground mr-2" />
+                      <span className="text-sm text-muted-foreground">Current account</span>
+                    </div>
+                    <span className="text-sm">
+                      +S/. {currentBalance.toFixed(2)}
+                    </span>
+                  </div>
+                  <Separator className="my-4" />
+
                   {/* Total Income */}
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
-                      <HandCoins  className="h-4 w-4 text-muted-foreground mr-2"/>
+                      <HandCoins className="h-4 w-4 text-muted-foreground mr-2" />
                       <span className="text-sm text-muted-foreground">Total Expenses</span>
                     </div>
                     <span className="text-sm">
@@ -309,7 +372,7 @@ export default function ExpensesPage() {
                   {/* Salary Income */}
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
-                      <ShoppingCart  className="h-4 w-4 text-muted-foreground mr-2"/>
+                      <ShoppingCart className="h-4 w-4 text-muted-foreground mr-2" />
                       <span className="text-sm text-muted-foreground">Shopping</span>
                     </div>
                     <span className="text-sm">
@@ -324,7 +387,7 @@ export default function ExpensesPage() {
                   {/* Other Income */}
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
-                      <Car  className="h-4 w-4 text-muted-foreground mr-2"/>
+                      <Car className="h-4 w-4 text-muted-foreground mr-2" />
                       <span className="text-sm text-muted-foreground">Transportation</span>
                     </div>
                     <span className="text-sm">
@@ -339,7 +402,7 @@ export default function ExpensesPage() {
                   {/* Other Income */}
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
-                      <TvMinimalPlay   className="h-4 w-4 text-muted-foreground mr-2"/>
+                      <TvMinimalPlay className="h-4 w-4 text-muted-foreground mr-2" />
                       <span className="text-sm text-muted-foreground">Entertainment</span>
                     </div>
                     <span className="text-sm">
@@ -359,8 +422,8 @@ export default function ExpensesPage() {
 
       <Card>
         <CardHeader className="flex items-center">
-            <NotepadText className="h-4 w-4 text-gray-600 mr-1"/>
-            <CardTitle className="text-sm lg:text-lg font-semibold lg:font-medium">Expense History</CardTitle>
+          <NotepadText className="h-4 w-4 text-gray-600 mr-1" />
+          <CardTitle className="text-sm lg:text-lg font-semibold lg:font-medium">Expense History</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">

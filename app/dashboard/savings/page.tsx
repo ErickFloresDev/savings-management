@@ -9,43 +9,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useData } from "@/lib/data-context"
-import {
-  Plus,
-  Target,
-  TrendingUp,
-  CheckCircle2,
-  CheckCircle,
-  Clock,
-  Settings,
-  Percent,
-  Pencil,
-  Trash2,
-  ChevronDown,
-  EllipsisVertical,
-  RotateCcw,
-  CircleCheckBig,
-  TrendingDown,
-  PiggyBank,
-  DollarSign,
-} from "lucide-react"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+import { Plus, Target, TrendingUp, CheckCircle2, CheckCircle, Clock, Settings, Pencil, Trash2, EllipsisVertical, RotateCcw, CircleCheckBig, PiggyBank, DollarSign } from "lucide-react"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import { Progress } from "@/components/ui/progress"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast"
@@ -90,7 +56,6 @@ export default function SavingsPage() {
     return {
       cash,
       account,
-      total: cash + account
     }
   }, [income, expenses, savings])
 
@@ -309,8 +274,7 @@ export default function SavingsPage() {
                     </Label>
                     <div className="text-xs text-muted-foreground mb-1">
                       Available in {goalFormData.incomeType}: S/.{" "}
-                      {(goalFormData.incomeType === "cash" ? balances.cash : balances.account).toFixed(2)} | Total: S/.{" "}
-                      {balances.total.toFixed(2)}
+                      {(goalFormData.incomeType === "cash" ? balances.cash : balances.account).toFixed(2)}
                     </div>
                     <Input
                       id="currentAmount"

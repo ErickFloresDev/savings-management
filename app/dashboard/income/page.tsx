@@ -27,13 +27,18 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Separator } from "@/components/ui/separator"
 
 export default function IncomePage() {
-  const { income, addIncome, updateIncome, deleteIncome } = useData()
+  const { income, expenses, savings, addIncome, updateIncome, deleteIncome } = useData()
   const [open, setOpen] = useState(false)
   const [editingIncome, setEditingIncome] = useState<string | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const { toast } = useToast()
 
   const [visibleCount, setVisibleCount] = useState(5)
+
+  const totalIncome = income.reduce((sum, i) => sum + i.amount, 0)
+  const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0)
+  const totalSavings = savings.reduce((sum, s) => sum + Number(s.currentAmount || 0), 0)
+  const currentBalance = totalIncome - totalExpenses - totalSavings
 
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split("T")[0],
@@ -213,7 +218,16 @@ export default function IncomePage() {
         </Dialog>
       </div>
 
-      <div className="hidden lg:grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="hidden lg:grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="gap-0">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Current account</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-xl font-semibold">+S/. {currentBalance.toFixed(2)}</div>
+          </CardContent>
+        </Card>
         <Card className="gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Income</CardTitle>
@@ -268,6 +282,17 @@ export default function IncomePage() {
 
               <AccordionContent>
                 <CardContent className="space-y-4 pt-4">
+                  {/* Current account */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-row justify-between items-center">
+                      <DollarSign  className="h-4 w-4 text-muted-foreground mr-2"/>
+                      <span className="text-sm text-muted-foreground">Current account</span>
+                    </div>
+                    <span className="text-sm">
+                      +S/. {currentBalance.toFixed(2)}
+                    </span>
+                  </div>
+                  <Separator className="my-4" />
                   {/* Total Income */}
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
