@@ -30,31 +30,31 @@ export function NavBar() {
               <Link href="/dashboard">
                 <Button variant="ghost" size="sm" className="gap-2 text-sm">
                   <Home className="h-4 w-4" />
-                  Dashboard
+                  Panel
                 </Button>
               </Link>
               <Link href="/dashboard/income">
                 <Button variant="ghost" size="sm" className="gap-2 text-sm">
                   <DollarSign className="h-4 w-4" />
-                  Income
+                  Ingresos
                 </Button>
               </Link>
               <Link href="/dashboard/expenses">
                 <Button variant="ghost" size="sm" className="gap-2 text-sm">
                   <CreditCard className="h-4 w-4" />
-                  Expenses
+                  Gastos
                 </Button>
               </Link>
               <Link href="/dashboard/savings">
                 <Button variant="ghost" size="sm" className="gap-2 text-sm">
                   <PiggyBank className="h-4 w-4" />
-                  Savings
+                  Ahorros
                 </Button>
               </Link>
               <Link href="/dashboard/bank">
                 <Button variant="ghost" size="sm" className="gap-2 text-sm">
                   <Building2 className="h-4 w-4" />
-                  Bank
+                  Banca
                 </Button>
               </Link>
             </div>

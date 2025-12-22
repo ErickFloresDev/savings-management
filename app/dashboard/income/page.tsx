@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useData } from "@/lib/data-context"
-import { Plus, Calendar, Wallet, BriefcaseBusiness, DollarSign, Pencil, Trash2, EllipsisVertical, RefreshCw, TrendingUp, ReceiptText, NotepadText } from "lucide-react"
+import { Plus, Calendar, Wallet, BriefcaseBusiness, DollarSign, Pencil, Trash2, EllipsisVertical, RefreshCw, TrendingUp, ReceiptText, NotepadText, Settings, CirclePlus } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import {
   AlertDialog,
@@ -112,9 +112,10 @@ export default function IncomePage() {
     <div className="container mx-auto max-w-7xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold mb-1">Income</h1>
-          <p className="text-sm text-muted-foreground">Track your income sources</p>
+          <h1 className="text-xl font-semibold mb-1">Gestión de Ingresos</h1>
+          <p className="text-sm text-muted-foreground">Realice un seguimiento de sus ingresos</p>
         </div>
+        
         <Dialog
           open={open}
           onOpenChange={(isOpen) => {
@@ -131,9 +132,9 @@ export default function IncomePage() {
           }}
         >
           <DialogTrigger asChild>
-            <Button size="sm" className="gap-2 text-sm">
+            <Button size="sm" className="hidden md:flex gap-2 text-sm">
               <Plus className="h-4 w-4" />
-              Add Income
+              Registrar Ingreso
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
@@ -221,7 +222,7 @@ export default function IncomePage() {
       <div className="hidden lg:grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Current account</CardTitle>
+            <CardTitle className="text-sm font-medium">Saldo Actual</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -230,7 +231,7 @@ export default function IncomePage() {
         </Card>
         <Card className="gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Income</CardTitle>
+            <CardTitle className="text-sm font-medium">Ingresos Totales</CardTitle>
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -239,7 +240,7 @@ export default function IncomePage() {
         </Card>
         <Card className="gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Salary Income</CardTitle>
+            <CardTitle className="text-sm font-medium">Ingresos Salariales</CardTitle>
             <BriefcaseBusiness className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -254,7 +255,7 @@ export default function IncomePage() {
         </Card>
         <Card className="gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Other Income</CardTitle>
+            <CardTitle className="text-sm font-medium">Otros Ingresos</CardTitle>
             <RefreshCw className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -276,7 +277,7 @@ export default function IncomePage() {
               <AccordionTrigger className="px-6 py-0">
                 <div className="flex flex-row justify-between items-center">
                   <TrendingUp  className="h-4 w-4 text-gray-600 mr-2"/>
-                  <span className="text-sm text-black font-semibold">Income Summary</span>
+                  <span className="text-sm text-black font-semibold">Resumen de Ingresos</span>
                 </div>
               </AccordionTrigger>
 
@@ -286,7 +287,7 @@ export default function IncomePage() {
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <DollarSign  className="h-4 w-4 text-muted-foreground mr-2"/>
-                      <span className="text-sm text-muted-foreground">Current account</span>
+                      <span className="text-sm text-muted-foreground">Saldo Actual</span>
                     </div>
                     <span className="text-sm">
                       +S/. {currentBalance.toFixed(2)}
@@ -297,7 +298,7 @@ export default function IncomePage() {
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <Wallet  className="h-4 w-4 text-muted-foreground mr-2"/>
-                      <span className="text-sm text-muted-foreground">Total Income</span>
+                      <span className="text-sm text-muted-foreground">Ingresos Totales</span>
                     </div>
                     <span className="text-sm">
                       +S/. {income.reduce((sum, i) => sum + i.amount, 0).toFixed(2)}
@@ -308,7 +309,7 @@ export default function IncomePage() {
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <BriefcaseBusiness  className="h-4 w-4 text-muted-foreground mr-2"/>
-                      <span className="text-sm text-muted-foreground">Salary Income</span>
+                      <span className="text-sm text-muted-foreground">Ingresos Salariales</span>
                     </div>
                     <span className="text-sm">
                       +S/.{" "}
@@ -323,7 +324,7 @@ export default function IncomePage() {
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <RefreshCw  className="h-4 w-4 text-muted-foreground mr-2"/>
-                      <span className="text-sm text-muted-foreground">Other Income</span>
+                      <span className="text-sm text-muted-foreground">Otros Ingresos</span>
                     </div>
                     <span className="text-sm">
                       +S/.{" "}
@@ -340,10 +341,18 @@ export default function IncomePage() {
         </Accordion>
       </div>
 
+
+      <div className="md:hidden flex items-center justify-end">
+        <Button variant="outline"  onClick={() => setOpen(true)}>
+          <CirclePlus className="h-4 w-4" />
+          Registrar Ingreso
+        </Button>
+      </div>
+            
       <Card>
         <CardHeader className="flex items-center">
-            <NotepadText className="h-4 w-4 text-gray-600 mr-1"/>
-            <CardTitle className="text-sm lg:text-lg font-semibold lg:font-medium">Income History</CardTitle>
+          <NotepadText className="h-4 w-4 text-gray-600 mr-1"/>
+          <CardTitle className="text-base lg:text-lg font-semibold lg:font-medium">Historial de Ingresos</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">

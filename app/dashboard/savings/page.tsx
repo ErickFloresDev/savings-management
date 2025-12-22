@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useData } from "@/lib/data-context"
-import { Plus, Target, TrendingUp, CheckCircle2, CheckCircle, Clock, Settings, Pencil, Trash2, EllipsisVertical, RotateCcw, CircleCheckBig, PiggyBank, DollarSign } from "lucide-react"
+import { Plus, Target, TrendingUp, CheckCircle2, CheckCircle, Clock, Settings, Pencil, Trash2, EllipsisVertical, RotateCcw, CircleCheckBig, PiggyBank, DollarSign, CirclePlus } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import { Progress } from "@/components/ui/progress"
@@ -190,8 +190,8 @@ export default function SavingsPage() {
     <div className="container mx-auto max-w-7xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold mb-1">Savings Goals</h1>
-          <p className="text-sm text-muted-foreground">Manage your savings targets</p>
+          <h1 className="text-xl font-semibold mb-1">Metas de Ahorro</h1>
+          <p className="text-sm text-muted-foreground">Gestiona tus objetivos de ahorro</p>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -201,7 +201,7 @@ export default function SavingsPage() {
               <DialogTrigger asChild>
                 <Button size="sm" className="hidden md:flex gap-2 text-sm">
                   <Plus className="h-4 w-4" />
-                  Add Goal
+                  Nueva Meta
                 </Button>
               </DialogTrigger>
 
@@ -405,24 +405,6 @@ export default function SavingsPage() {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-
-            {/* ================= MOBILE DROPDOWN ================= */}
-            <div className="md:hidden">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon">
-                    <Settings className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => setOpenGoal(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Goal
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
           </div>
         </div>
       </div>
@@ -430,34 +412,34 @@ export default function SavingsPage() {
       <div className="hidden lg:grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card className="gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Saved</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Ahorrado</CardTitle>
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-xl font-semibold">S/. {Number(totalSaved).toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground mt-1">of S/. {totalTarget.toFixed(2)} target</p>
+            <p className="text-xs text-muted-foreground mt-1">de S/. {totalTarget.toFixed(2)} objetivo</p>
           </CardContent>
         </Card>
         <Card className="gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Completed Goals</CardTitle>
+            <CardTitle className="text-sm font-medium">Metas Completadas</CardTitle>
             <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-xl font-semibold">{completedGoals}</div>
-            <p className="text-xs text-muted-foreground mt-1">of {savings.length} goals</p>
+            <p className="text-xs text-muted-foreground mt-1">de {savings.length} metas</p>
           </CardContent>
         </Card>
         <Card className="gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Overall Progress</CardTitle>
+            <CardTitle className="text-sm font-medium">Progreso General</CardTitle>
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-xl font-semibold">
               {totalTarget > 0 ? ((totalSaved / totalTarget) * 100).toFixed(0) : 0}%
             </div>
-            <p className="text-xs text-muted-foreground mt-1">towards all goals</p>
+            <p className="text-xs text-muted-foreground mt-1">de todos los objetivos</p>
           </CardContent>
         </Card>
       </div>
@@ -469,7 +451,7 @@ export default function SavingsPage() {
               <AccordionTrigger className="px-6 py-0">
                 <div className="flex flex-row justify-between items-center">
                   <PiggyBank className="h-4 w-4 text-gray-600 mr-2"/>
-                  <span className="text-sm text-black font-semibold">Savings Summary</span>
+                  <span className="text-sm text-black font-semibold">Resumen de Ahorro</span>
                 </div>
               </AccordionTrigger>
 
@@ -479,7 +461,7 @@ export default function SavingsPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <DollarSign className="h-4 w-4 text-muted-foreground mr-2"/>
-                      <span className="text-sm text-muted-foreground">Total Saved</span>
+                      <span className="text-sm text-muted-foreground">Total Ahorrado</span>
                     </div>
                     <span className="text-sm">
                       S/. {Number(totalSaved).toFixed(2)}
@@ -490,7 +472,7 @@ export default function SavingsPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <CircleCheckBig className="h-4 w-4 text-muted-foreground mr-2"/>
-                      <span className="text-sm text-muted-foreground">Completed Goals</span>
+                      <span className="text-sm text-muted-foreground">Metas Completadas</span>
                     </div>
                     <span className="text-sm">
                       {completedGoals}
@@ -501,7 +483,7 @@ export default function SavingsPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <TrendingUp className="h-4 w-4 text-muted-foreground mr-2"/>
-                      <span className="text-sm text-muted-foreground">Overall Progress</span>
+                      <span className="text-sm text-muted-foreground">Progreso General</span>
                     </div>
                     <span className="text-sm">
                       {totalTarget > 0 ? ((totalSaved / totalTarget) * 100).toFixed(0) : 0}%
@@ -514,6 +496,13 @@ export default function SavingsPage() {
         </Accordion>
       </div>
 
+      <div className="md:hidden flex items-center justify-end">
+        <Button variant="outline"  onClick={() => setOpenGoal(true)}>
+          <CirclePlus className="h-4 w-4" />
+          Registrar Objetivo
+        </Button>
+      </div>
+      
       <div className="grid gap-4">
         {savings.map((goal) => {
           const progress = (goal.currentAmount / goal.targetAmount) * 100
@@ -538,7 +527,7 @@ export default function SavingsPage() {
                       )}
                     </p>
                     <p className="mt-1 text-sm text-muted-foreground flex items-center">
-                      Available: S/. {availableBalance.toFixed(2)}
+                      Disponible: S/. {availableBalance.toFixed(2)}
                     </p>
                   </div>
 
@@ -634,7 +623,7 @@ export default function SavingsPage() {
                       }}
                       className="text-xs"
                     >
-                      Add
+                      Agregar
                     </Button>
                   </div>
                 )}

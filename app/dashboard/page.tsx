@@ -33,8 +33,8 @@ export default function DashboardPage() {
   return (
     <div className="container mx-auto max-w-7xl space-y-6">
       <div>
-        <h1 className="text-xl font-semibold mb-1">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Overview of your finances</p>
+        <h1 className="text-xl font-semibold mb-1">Panel de Gestión</h1>
+        <p className="text-sm text-muted-foreground">Visión general de sus finanzas</p>
       </div>
 
       {!hasUrl && (
@@ -50,46 +50,46 @@ export default function DashboardPage() {
       <div className="grid gap-4 lg:grid-cols-4">
         <Card className="gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Current account</CardTitle>
+            <CardTitle className="text-sm font-medium">Saldo Actual</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-xl font-bold text-gray-600">S/. {currentBalance.toFixed(2)} </div>
-            <p className="text-xs text-muted-foreground mt-1">Current money</p>
+            <p className="text-xs text-muted-foreground mt-1">Dinero ahora</p>
           </CardContent>
         </Card>
 
         <Card className="hidden lg:block gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Income</CardTitle>
+            <CardTitle className="text-sm font-medium">Ingresos Totales</CardTitle>
             <TrendingUp  className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-xl font-semibold text-green-600">+S/. {totalIncome.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground mt-1">{income.length} transactions</p>
+            <p className="text-xs text-muted-foreground mt-1">{income.length} transacciones</p>
           </CardContent>
         </Card>
 
         <Card className="hidden lg:block gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
+            <CardTitle className="text-sm font-medium">Gastos Totales</CardTitle>
             <TrendingDown className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-xl font-semibold text-red-500">-S/. {totalExpenses.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground mt-1">{expenses.length} transactions</p>
+            <p className="text-xs text-muted-foreground mt-1">{expenses.length} transacciones</p>
           </CardContent>
         </Card>
 
         <Card className="hidden lg:block gap-0">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Goals</CardTitle>
+            <CardTitle className="text-sm font-medium">Ahorros Totales</CardTitle>
             <PiggyBank className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-xl font-semibold text-orange-600">-S/.{totalSavings.toFixed(2)}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              {savings.filter((s) => s.status === "completed").length} completed
+              {savings.filter((s) => s.status === "completed").length} completados
             </p>
           </CardContent>
         </Card>
@@ -102,7 +102,7 @@ export default function DashboardPage() {
               <AccordionTrigger className="px-6 py-0">
                 <div className="flex flex-row justify-between items-center">
                   <Wallet className="h-4 w-4 text-muted-foreground mr-2"/>
-                  <span className="text-sm text-muted-foreground">Total Summary</span>
+                  <span className="text-sm text-muted-foreground">Resumen Totales</span>
                 </div>
               </AccordionTrigger>
 
@@ -112,7 +112,7 @@ export default function DashboardPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <TrendingUp  className="h-4 w-4 text-muted-foreground mr-2"/>
-                      <span className="text-sm text-muted-foreground">Total Income</span>
+                      <span className="text-sm text-muted-foreground">Ingresos Totales</span>
                     </div>
                     <span className="text-sm text-green-600 font-semibold">
                       +S/. {totalIncome.toFixed(2)}
@@ -123,7 +123,7 @@ export default function DashboardPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <TrendingDown  className="h-4 w-4 text-muted-foreground mr-2"/>
-                      <span className="text-sm text-muted-foreground">Total Expense</span>
+                      <span className="text-sm text-muted-foreground">Gastos Totales</span>
                     </div>
                     <span className="text-sm text-red-500 font-semibold">
                       -S/. {totalExpenses.toFixed(2)}
@@ -134,7 +134,7 @@ export default function DashboardPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <PiggyBank className="h-4 w-4 text-muted-foreground mr-2"/>
-                      <span className="text-sm text-muted-foreground">Total Goals</span>
+                      <span className="text-sm text-muted-foreground">Ahorros Totales</span>
                     </div>
                     <span className="text-sm text-orange-600 font-semibold">
                       -S/.{totalSavings.toFixed(2)}
@@ -150,7 +150,7 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Recent Income</CardTitle>
+            <CardTitle className="text-base">Ingresos Recientes</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -190,7 +190,7 @@ export default function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Recent Expenses</CardTitle>
+            <CardTitle className="text-base">Gastos Recientes</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -231,7 +231,7 @@ export default function DashboardPage() {
 
       <Card className="gap-4">
         <CardHeader className="py-0">
-          <CardTitle className="text-base">Savings Goals Progress</CardTitle>
+          <CardTitle className="text-base">Progresos de Ahorros</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {savings.length === 0 ? (

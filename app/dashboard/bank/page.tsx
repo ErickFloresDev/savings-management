@@ -35,34 +35,34 @@ export default function BankPage() {
   return (
     <div className="container mx-auto max-w-7xl space-y-6">
       <div>
-        <h1 className="text-xl font-semibold mb-1">Bank</h1>
-        <p className="text-sm text-muted-foreground">Overview of your income by source</p>
+        <h1 className="text-xl font-semibold mb-1">Gestión de Saldo</h1>
+        <p className="text-sm text-muted-foreground">Descripción general de sus ingresos por fuente</p>
       </div>
 
       {/* ADD THIS NEW CARD - Current Balance */}
       <Card className="bg-gray-50 border-primary/20 gap-0">
         <CardHeader className="flex items-center gap-2 mb-2">
           <Wallet className="h-5 w-5" />
-          <CardTitle className="text-base md:text-lg">Current Balance</CardTitle>
+          <CardTitle className="text-base md:text-lg">Saldo Actual</CardTitle>
         </CardHeader>
         <CardContent>
           <div className={`text-2xl font-semibold ${currentBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
             S/. {currentBalance.toFixed(2)}
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            Available balance after expenses and savings
+            Saldo disponible después de gastos y ahorros
           </p>
           <div className="flex items-center gap-6 mt-4 pt-4 border-gray-300 border-t text-sm">
             <div>
-              <p className="text-muted-foreground">Income</p>
+              <p className="text-muted-foreground">Ingresos</p>
               <p className="font-semibold text-green-600">+S/. {totalIncome.toFixed(2)}</p>
             </div>
             <div>
-              <p className="text-muted-foreground">Expenses</p>
+              <p className="text-muted-foreground">Gastos</p>
               <p className="font-semibold text-red-600">-S/. {totalExpenses.toFixed(2)}</p>
             </div>
             <div>
-              <p className="text-muted-foreground">Savings</p>
+              <p className="text-muted-foreground">Ahorros</p>
               <p className="font-semibold text-orange-600">-S/. {totalSavings.toFixed(2)}</p>
             </div>
           </div>
@@ -75,12 +75,12 @@ export default function BankPage() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <Wallet className="h-5 w-5 text-muted-foreground" />
-              <CardTitle className="text-base">Cash Income</CardTitle>
+              <CardTitle className="text-base">Ingresos en Efectivos</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-sm text-muted-foreground mb-1">Total Balance</p>
+              <p className="text-sm text-muted-foreground mb-1">Saldo Total</p>
               <p className={`text-2xl font-semibold ${cashBalance >= 0 ? 'text-gray-600' : 'text-red-600'}`}>
                 S/. {cashBalance.toFixed(2)}
               </p>
@@ -88,15 +88,15 @@ export default function BankPage() {
             <div className="pt-4 border-t space-y-3">
               <div className="grid grid-cols-3 gap-2 text-sm mb-3">
                 <div>
-                  <p className="text-muted-foreground text-xs">Expenses</p>
+                  <p className="text-muted-foreground text-xs">Gastos</p>
                   <p className="font-semibold text-red-600">-S/. {cashExpenses.toFixed(2)}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground text-xs">Savings</p>
+                  <p className="text-muted-foreground text-xs">Ahorros</p>
                   <p className="font-semibold text-orange-600">-S/. {cashSavings.toFixed(2)}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground text-xs">Income</p>
+                  <p className="text-muted-foreground text-xs">Ingresos</p>
                   <p className="font-semibold text-green-600">+S/. {cashIncome.toFixed(2)}</p>
                 </div>
               </div>
@@ -104,12 +104,12 @@ export default function BankPage() {
                 <div className="flex items-center gap-2">
                   <TrendingUp className="h-4 w-4 text-muted-foreground" />
                   <span className="text-muted-foreground">
-                    {income.filter((i) => i.incomeType === "cash").length} transactions
+                    {income.filter((i) => i.incomeType === "cash").length} transacciones
                   </span>
                 </div>
               </div>
               <p className="text-xs text-muted-foreground">
-                Income received in cash for immediate use and daily expenses.
+                Ingresos recibidos en efectivo para uso inmediato y gastos diarios.
               </p>
             </div>
           </CardContent>
@@ -119,12 +119,12 @@ export default function BankPage() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-muted-foreground" />
-              <CardTitle className="text-base">Account Income</CardTitle>
+              <CardTitle className="text-base">Ingresos en la Cuenta</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-sm text-muted-foreground mb-1">Total Balance</p>
+              <p className="text-sm text-muted-foreground mb-1">Saldo total</p>
               <p className={`text-2xl font-semibold ${accountBalance >= 0 ? 'text-gray-600' : 'text-red-600'}`}>
                 S/. {accountBalance.toFixed(2)}
               </p>
@@ -132,15 +132,15 @@ export default function BankPage() {
             <div className="pt-4 border-t space-y-3">
               <div className="grid grid-cols-3 gap-2 text-sm mb-3">
                 <div>
-                  <p className="text-muted-foreground text-xs">Expenses</p>
+                  <p className="text-muted-foreground text-xs">Gastos</p>
                   <p className="font-semibold text-red-600">-S/. {accountExpenses.toFixed(2)}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground text-xs">Savings</p>
+                  <p className="text-muted-foreground text-xs">Ahorros</p>
                   <p className="font-semibold text-orange-600">-S/. {accountSavings.toFixed(2)}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground text-xs">Income</p>
+                  <p className="text-muted-foreground text-xs">Ingresos</p>
                   <p className="font-semibold text-green-600">+S/. {accountIncome.toFixed(2)}</p>
                 </div>
               </div>
@@ -148,12 +148,12 @@ export default function BankPage() {
                 <div className="flex items-center gap-2">
                   <TrendingUp className="h-4 w-4 text-muted-foreground" />
                   <span className="text-muted-foreground">
-                    {income.filter((i) => i.incomeType === "account").length} transactions
+                    {income.filter((i) => i.incomeType === "account").length} transacciones
                   </span>
                 </div>
               </div>
               <p className="text-xs text-muted-foreground">
-                Income deposited to your bank account for savings and larger purchases.
+                Ingresos depositados en tu cuenta bancaria para ahorros y compras mayores.
               </p>
             </div>
           </CardContent>
@@ -162,12 +162,12 @@ export default function BankPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Income Distribution</CardTitle>
+          <CardTitle className="text-base">Distribución del ingreso</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span>Cash</span>
+              <span>Efectivo</span>
               <span className="font-semibold">
                 {totalIncome > 0 ? ((cashIncome / totalIncome) * 100).toFixed(1) : 0}%
               </span>
@@ -181,7 +181,7 @@ export default function BankPage() {
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span>Account</span>
+              <span>Cuenta</span>
               <span className="font-semibold">
                 {totalIncome > 0 ? ((accountIncome / totalIncome) * 100).toFixed(1) : 0}%
               </span>
@@ -198,7 +198,7 @@ export default function BankPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Income Transactions</CardTitle>
+          <CardTitle className="text-base">Transacciones de Ingresos</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
