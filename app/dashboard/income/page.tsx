@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useData } from "@/lib/data-context"
 import { Plus, Calendar, Wallet, BriefcaseBusiness, DollarSign, Pencil, Trash2, EllipsisVertical, RefreshCw, TrendingUp, ReceiptText, NotepadText, Settings, CirclePlus } from "lucide-react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -139,7 +139,10 @@ export default function IncomePage() {
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle className="text-base">{editingIncome ? "Edit Income" : "Add Income"}</DialogTitle>
+              <DialogTitle className="text-base text-center">{editingIncome ? "Editar Ingreso" : "Agregar Ingreso"}</DialogTitle>
+              <DialogDescription className="text-sm text-center">
+                Gestiona tus ingresos de manera correcta.
+              </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">

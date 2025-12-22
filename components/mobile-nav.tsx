@@ -9,11 +9,11 @@ export function MobileNav() {
   const pathname = usePathname()
 
   const links = [
-    { href: "/dashboard", icon: Home, label: "Home" },
-    { href: "/dashboard/income", icon: DollarSign, label: "Income" },
-    { href: "/dashboard/expenses", icon: CreditCard, label: "Expenses" },
-    { href: "/dashboard/savings", icon: PiggyBank, label: "Savings" },
-    { href: "/dashboard/bank", icon: Building2, label: "Bank" },
+    { href: "/dashboard", icon: Home, label: "Inicio" },
+    { href: "/dashboard/income", icon: DollarSign, label: "Ingresos" },
+    { href: "/dashboard/expenses", icon: CreditCard, label: "Gastos" },
+    { href: "/dashboard/savings", icon: PiggyBank, label: "Ahorros" },
+    { href: "/dashboard/bank", icon: Building2, label: "Banca" },
   ]
 
   return (

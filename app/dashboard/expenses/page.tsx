@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useData } from "@/lib/data-context"
 import { Plus, Calendar, HandCoins, ShoppingCart, Car, Pencil, Trash2, EllipsisVertical, TrendingDown, Wallet, TvMinimalPlay, NotepadText, DollarSign, CirclePlus } from "lucide-react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -185,7 +185,10 @@ export default function ExpensesPage() {
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle className="text-base">{editingExpense ? "Edit Expense" : "Add Expense"}</DialogTitle>
+              <DialogTitle className="text-base text-center">{editingExpense ? "Editar Gasto" : "Agregar Gasto"}</DialogTitle>
+              <DialogDescription className="text-sm text-center">
+                Gestiona tus gastos de manera correcta.
+              </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">

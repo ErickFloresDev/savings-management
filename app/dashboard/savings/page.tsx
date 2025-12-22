@@ -25,6 +25,41 @@ export default function SavingsPage() {
   const [editGoal, setEditGoal] = useState<string | null>(null)
   const [deleteGoalId, setDeleteGoalId] = useState<string | null>(null)
 
+  // Validacion
+  const [amounts, setAmounts] = useState<Record<string, string>>({})
+  const [errors, setErrors] = useState<Record<string, string>>({})
+
+  const handleAmountChange = (
+    goalId: string,
+    value: string,
+    goal: (typeof savings)[0],
+    availableBalance: number
+  ) => {
+    const num = Number(value)
+    const current = Number(goal.currentAmount ?? 0)
+    const target = Number(goal.targetAmount ?? 0)
+
+    setAmounts((prev) => ({ ...prev, [goalId]: value }))
+
+    if (num + current > target) {
+      setErrors((prev) => ({
+        ...prev,
+        [goalId]: "El monto supera el objetivo",
+      }))
+      return
+    }
+
+    if (num > availableBalance) {
+      setErrors((prev) => ({
+        ...prev,
+        [goalId]: "Dinero insuficiente",
+      }))
+      return
+    }
+
+    setErrors((prev) => ({ ...prev, [goalId]: "" }))
+  }
+
   const [goalFormData, setGoalFormData] = useState({
     goal: "",
     incomeType: "account" as "cash" | "account",
@@ -207,8 +242,8 @@ export default function SavingsPage() {
 
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle className="text-base">Add Savings Goal</DialogTitle>
-                  <DialogDescription className="text-sm">
+                  <DialogTitle className="text-base text-center">Add Savings Goal</DialogTitle>
+                  <DialogDescription className="text-sm text-center">
                     Create a new goal to track your savings progress.
                   </DialogDescription>
                 </DialogHeader>
@@ -527,7 +562,7 @@ export default function SavingsPage() {
                       )}
                     </p>
                     <p className="mt-1 text-sm text-muted-foreground flex items-center">
-                      Disponible: S/. {availableBalance.toFixed(2)}
+                      Dinero disponible: S/. {availableBalance.toFixed(2)}
                     </p>
                   </div>
 
@@ -549,22 +584,14 @@ export default function SavingsPage() {
                         Edit
                       </DropdownMenuItem>
 
-                      {/* Complete / Reopen */}
+                      {/* Complete */}
                       <DropdownMenuItem
                         onClick={() => handleToggleStatus(goal.id, goal.status)}
                       >
-                        {goal.status === "completed" ? (
-                          <>
-                            <RotateCcw className="mr-2 h-4 w-4" />
-                            Reopen
-                          </>
-                        ) : (
-                          <>
-                            <CircleCheckBig className="mr-2 h-4 w-4" />
-                            Complete
-                          </>
-                        )}
+                        <CircleCheckBig className="mr-2 h-4 w-4" />
+                        Complete
                       </DropdownMenuItem>
+
 
                       <DropdownMenuSeparator />
 
@@ -589,42 +616,50 @@ export default function SavingsPage() {
                     <p className="text-sm font-semibold">{progress.toFixed(0)}%</p>
                   </div>
                   <Progress value={progress} className="h-2" />
+                  <div className="flex items-center justify-start mt-2">
+                    <p className="text-xs text-gray-500">
+                      Faltante para la meta: S/.{" "}
+                      {Math.max(
+                        Number(goal.targetAmount ?? 0) - Number(goal.currentAmount ?? 0),
+                        0
+                      ).toFixed(2)}
+                    </p>
+                  </div>
                 </div>
                 {goal.status === "pending" && (
-                  <div className="flex gap-2">
-                    <Input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      max={availableBalance}
-                      placeholder="Add amount"
-                      className="text-sm"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault()
-                          const input = e.currentTarget
-                          const value = Number.parseFloat(input.value)
-                          if (value > 0) {
-                            handleUpdateAmount(goal.id, value, goal)
-                            input.value = ""
-                          }
+                  <div className="flex flex-col gap-1 w-full">
+                    <div className="flex gap-2">
+                      <Input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        max={availableBalance}
+                        placeholder="Agregar cantidad"
+                        className={`text-sm mb-1 ${errors[goal.id] ? "border-red-500" : ""}`}
+                        value={amounts[goal.id] ?? ""}
+                        onChange={(e) => handleAmountChange(goal.id, e.target.value, goal, availableBalance)}
+                      />
+
+                      <Button
+                        size="sm"
+                        className="text-xs"
+                        disabled={
+                          !amounts[goal.id] || Number(amounts[goal.id]) <= 0 || !!errors[goal.id] 
                         }
-                      }}
-                    />
-                    <Button
-                      size="sm"
-                      onClick={(e) => {
-                        const input = e.currentTarget.previousElementSibling as HTMLInputElement
-                        const value = Number.parseFloat(input.value)
-                        if (value > 0) {
-                          handleUpdateAmount(goal.id, value, goal)
-                          input.value = ""
-                        }
-                      }}
-                      className="text-xs"
-                    >
-                      Agregar
-                    </Button>
+                        onClick={() => {
+                          handleUpdateAmount(goal.id, Number(amounts[goal.id]), goal)
+                          setAmounts((prev) => ({ ...prev, [goal.id]: "" }))
+                        }}
+                      >
+                        Agregar
+                      </Button>
+                    </div>
+
+                    {errors[goal.id] && (
+                      <p className="text-xs text-red-500">
+                        {errors[goal.id]}
+                      </p>
+                    )}
                   </div>
                 )}
               </CardContent>

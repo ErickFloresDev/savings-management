@@ -30,7 +30,7 @@ export function NavBar() {
               <Link href="/dashboard">
                 <Button variant="ghost" size="sm" className="gap-2 text-sm">
                   <Home className="h-4 w-4" />
-                  Panel
+                  Inicio
                 </Button>
               </Link>
               <Link href="/dashboard/income">
