@@ -37,7 +37,7 @@ export default function ExpensesPage() {
 
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split("T")[0],
-    paymentType: "account" as "cash" | "account",
+    paymentType: "cuenta" as "efectivo" | "cuenta",
     amount: "",
     category: "shopping" as "shopping" | "transportation" | "entertainment",
   })
@@ -78,7 +78,7 @@ export default function ExpensesPage() {
 
       setFormData({
         date: new Date().toISOString().split("T")[0],
-        paymentType: "account",
+        paymentType: "cuenta",
         amount: "",
         category: "shopping",
       })
@@ -115,7 +115,7 @@ export default function ExpensesPage() {
 
   // Agregar este useMemo después de tus estados, similar a savings page
   const balances = useMemo(() => {
-    const calculateBalance = (type: "cash" | "account") => {
+    const calculateBalance = (type: "efectivo" | "cuenta") => {
       const totalIncome = income
         .filter(i => i.incomeType === type)
         .reduce((sum, i) => sum + i.amount, 0)
@@ -131,18 +131,18 @@ export default function ExpensesPage() {
       return totalIncome - totalExpenses - totalSavings
     }
     
-    const cash = calculateBalance("cash")
-    const account = calculateBalance("account")
+    const efectivo = calculateBalance("efectivo")
+    const cuenta = calculateBalance("cuenta")
     
     return {
-      cash,
-      account
+      efectivo,
+      cuenta
     }
   }, [income, expenses, savings])
 
   // Agregar esta validación en handleSubmit, antes de addExpense o updateExpense
   const amount = Number.parseFloat(formData.amount)
-  const availableBalance = formData.paymentType === "cash" ? balances.cash : balances.account
+  const availableBalance = formData.paymentType === "efectivo" ? balances.efectivo : balances.cuenta
 
   if (amount > availableBalance) {
     toast({
@@ -170,7 +170,7 @@ export default function ExpensesPage() {
               setEditingExpense(null)
               setFormData({
                 date: new Date().toISOString().split("T")[0],
-                paymentType: "account",
+                paymentType: "cuenta",
                 amount: "",
                 category: "shopping",
               })
@@ -210,17 +210,17 @@ export default function ExpensesPage() {
                 </Label>
                 <Select
                   value={formData.paymentType}
-                  onValueChange={(value: "cash" | "account") => setFormData({ ...formData, paymentType: value })}
+                  onValueChange={(value: "efectivo" | "cuenta") => setFormData({ ...formData, paymentType: value })}
                 >
                   <SelectTrigger className="text-sm w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="cash" className="text-sm">
-                      Cash
+                    <SelectItem value="efectivo" className="text-sm">
+                      Efectivo
                     </SelectItem>
-                    <SelectItem value="account" className="text-sm">
-                      Account
+                    <SelectItem value="cuenta" className="text-sm">
+                      Cuenta
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -231,14 +231,14 @@ export default function ExpensesPage() {
                 </Label>
                 <div className="text-xs text-muted-foreground mb-1">
                   Available in {formData.paymentType}: S/.{" "}
-                  {(formData.paymentType === "cash" ? balances.cash : balances.account).toFixed(2)}
+                  {(formData.paymentType === "efectivo" ? balances.efectivo : balances.cuenta).toFixed(2)}
                 </div>
                 <Input
                   id="amount"
                   type="number"
                   step="0.01"
                   min="0"
-                  max={formData.paymentType === "cash" ? balances.cash : balances.account}
+                  max={formData.paymentType === "efectivo" ? balances.efectivo : balances.cuenta}
                   value={formData.amount}
                   onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                   required
@@ -349,7 +349,7 @@ export default function ExpensesPage() {
 
               <AccordionContent>
                 <CardContent className="space-y-4 pt-4">
-                  {/* Current account */}
+                  {/* Current cuenta */}
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <DollarSign className="h-4 w-4 text-muted-foreground mr-2" />
@@ -372,7 +372,7 @@ export default function ExpensesPage() {
                     </span>
                   </div>
                   <Separator className="my-4" />
-                  {/* Salary Income */}
+                  {/* Salario Income */}
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <ShoppingCart className="h-4 w-4 text-muted-foreground mr-2" />
@@ -387,7 +387,7 @@ export default function ExpensesPage() {
                     </span>
                   </div>
                   <Separator className="my-4" />
-                  {/* Other Income */}
+                  {/* Otros Income */}
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <Car className="h-4 w-4 text-muted-foreground mr-2" />
@@ -402,7 +402,7 @@ export default function ExpensesPage() {
                     </span>
                   </div>
                   <Separator className="my-4" />
-                  {/* Other Income */}
+                  {/* Otros Income */}
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <TvMinimalPlay className="h-4 w-4 text-muted-foreground mr-2" />

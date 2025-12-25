@@ -42,9 +42,9 @@ export default function IncomePage() {
 
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split("T")[0],
-    incomeType: "account" as "cash" | "account",
+    incomeType: "cuenta" as "efectivo" | "cuenta",
     amount: "",
-    category: "salary" as "salary" | "other",
+    category: "salario" as "salario" | "otros",
   })
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -77,9 +77,9 @@ export default function IncomePage() {
 
     setFormData({
       date: new Date().toISOString().split("T")[0],
-      incomeType: "account",
+      incomeType: "cuenta",
       amount: "",
-      category: "salary",
+      category: "salario",
     })
     setOpen(false)
   }
@@ -124,9 +124,9 @@ export default function IncomePage() {
               setEditingIncome(null)
               setFormData({
                 date: new Date().toISOString().split("T")[0],
-                incomeType: "account",
+                incomeType: "cuenta",
                 amount: "",
-                category: "salary",
+                category: "salario",
               })
             }
           }}
@@ -164,17 +164,17 @@ export default function IncomePage() {
                 </Label>
                 <Select
                   value={formData.incomeType}
-                  onValueChange={(value: "cash" | "account") => setFormData({ ...formData, incomeType: value })}
+                  onValueChange={(value: "efectivo" | "cuenta") => setFormData({ ...formData, incomeType: value })}
                 >
                   <SelectTrigger className="text-sm w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="cash" className="text-sm">
-                      Cash
+                    <SelectItem value="efectivo" className="text-sm">
+                      Efectivo
                     </SelectItem>
-                    <SelectItem value="account" className="text-sm">
-                      Account
+                    <SelectItem value="cuenta" className="text-sm">
+                      Cuenta
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -199,17 +199,17 @@ export default function IncomePage() {
                 </Label>
                 <Select
                   value={formData.category}
-                  onValueChange={(value: "salary" | "other") => setFormData({ ...formData, category: value })}
+                  onValueChange={(value: "salario" | "otros") => setFormData({ ...formData, category: value })}
                 >
                   <SelectTrigger className="text-sm w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="salary" className="text-sm">
-                      Salary
+                    <SelectItem value="salario" className="text-sm">
+                      Salario
                     </SelectItem>
-                    <SelectItem value="other" className="text-sm">
-                      Other
+                    <SelectItem value="otros" className="text-sm">
+                      Otros
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -250,7 +250,7 @@ export default function IncomePage() {
             <div className="text-xl font-semibold">
               +S/.{" "}
               {income
-                .filter((i) => i.category === "salary")
+                .filter((i) => i.category === "salario")
                 .reduce((sum, i) => sum + i.amount, 0)
                 .toFixed(2)}
             </div>
@@ -265,7 +265,7 @@ export default function IncomePage() {
             <div className="text-xl font-semibold">
               +S/.{" "}
               {income
-                .filter((i) => i.category === "other")
+                .filter((i) => i.category === "otros")
                 .reduce((sum, i) => sum + i.amount, 0)
                 .toFixed(2)}
             </div>
@@ -286,7 +286,7 @@ export default function IncomePage() {
 
               <AccordionContent>
                 <CardContent className="space-y-4 pt-4">
-                  {/* Current account */}
+                  {/* Current cuenta */}
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <DollarSign  className="h-4 w-4 text-muted-foreground mr-2"/>
@@ -308,7 +308,7 @@ export default function IncomePage() {
                     </span>
                   </div>
                   <Separator className="my-4" />
-                  {/* Salary Income */}
+                  {/* Salario Income */}
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <BriefcaseBusiness  className="h-4 w-4 text-muted-foreground mr-2"/>
@@ -317,13 +317,13 @@ export default function IncomePage() {
                     <span className="text-sm">
                       +S/.{" "}
                       {income
-                        .filter((i) => i.category === "salary")
+                        .filter((i) => i.category === "salario")
                         .reduce((sum, i) => sum + i.amount, 0)
                         .toFixed(2)}
                     </span>
                   </div>
                   <Separator className="my-4" />
-                  {/* Other Income */}
+                  {/* Otros Income */}
                   <div className="flex items-center justify-between">
                     <div className="flex flex-row justify-between items-center">
                       <RefreshCw  className="h-4 w-4 text-muted-foreground mr-2"/>
@@ -332,7 +332,7 @@ export default function IncomePage() {
                     <span className="text-sm">
                       +S/.{" "}
                       {income
-                        .filter((i) => i.category === "other")
+                        .filter((i) => i.category === "otros")
                         .reduce((sum, i) => sum + i.amount, 0)
                         .toFixed(2)}
                     </span>

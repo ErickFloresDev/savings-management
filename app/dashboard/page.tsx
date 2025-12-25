@@ -20,7 +20,7 @@ export default function DashboardPage() {
 
   const totalIncome = income.reduce((sum, i) => sum + i.amount, 0)
   const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0)
-  const activeSavings = savings.filter((s) => s.status === "pending")
+  const activeSavings = savings.filter((s) => s.status === "pendiente")
 
   // Funcion Ver mas items
   const [incomeVisible, setIncomeVisible] = useState(3)
@@ -89,7 +89,7 @@ export default function DashboardPage() {
           <CardContent>
             <div className="text-xl font-semibold text-orange-600">-S/.{totalSavings.toFixed(2)}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              {savings.filter((s) => s.status === "completed").length} completados
+              {savings.filter((s) => s.status === "completado").length} completados
             </p>
           </CardContent>
         </Card>

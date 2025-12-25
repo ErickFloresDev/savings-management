@@ -3,8 +3,8 @@
   "expenses": [],
   "savings": [],
   "bank": {
-    "cash": 0,
-    "account": 0,
+    "efectivo": 0,
+    "cuenta": 0,
     "savingsPercentage": 0
   }
 }

@@ -62,14 +62,14 @@ export default function SavingsPage() {
 
   const [goalFormData, setGoalFormData] = useState({
     goal: "",
-    incomeType: "account" as "cash" | "account",
+    incomeType: "cuenta" as "efectivo" | "cuenta",
     targetAmount: "",
     currentAmount: "",
   })
 
   // Calcular balances disponibles
   const balances = useMemo(() => {
-    const calculateBalance = (type: "cash" | "account") => {
+    const calculateBalance = (type: "efectivo" | "cuenta") => {
       const totalIncome = income
         .filter(i => i.incomeType === type)
         .reduce((sum, i) => sum + i.amount, 0)
@@ -85,12 +85,12 @@ export default function SavingsPage() {
       return totalIncome - totalExpenses - totalSavings
     }
     
-    const cash = calculateBalance("cash")
-    const account = calculateBalance("account")
+    const efectivo = calculateBalance("efectivo")
+    const cuenta = calculateBalance("cuenta")
     
     return {
-      cash,
-      account,
+      efectivo,
+      cuenta,
     }
   }, [income, expenses, savings])
 
@@ -112,7 +112,7 @@ export default function SavingsPage() {
       const targetAmount = Number.parseFloat(goalFormData.targetAmount)
 
       // Validar que hay fondos disponibles
-      const availableBalance = goalFormData.incomeType === "cash" ? balances.cash : balances.account
+      const availableBalance = goalFormData.incomeType === "efectivo" ? balances.efectivo : balances.cuenta
       if (currentAmount > availableBalance) {
         toast({
           title: "Error",
@@ -125,14 +125,14 @@ export default function SavingsPage() {
       addSavings({
         goal: goalFormData.goal,
         incomeType: goalFormData.incomeType,
-        status: currentAmount >= targetAmount ? "completed" : "pending",
+        status: currentAmount >= targetAmount ? "completado" : "pendiente",
         targetAmount: targetAmount,
         currentAmount: currentAmount,
       })
 
       setGoalFormData({
         goal: "",
-        incomeType: "account",
+        incomeType: "cuenta",
         targetAmount: "",
         currentAmount: "",
       })
@@ -163,12 +163,12 @@ export default function SavingsPage() {
       incomeType: goalFormData.incomeType,
       targetAmount: targetAmount,
       currentAmount: currentAmount,
-      status: currentAmount >= targetAmount ? "completed" : "pending",
+      status: currentAmount >= targetAmount ? "completado" : "pendiente",
     })
 
     setGoalFormData({
       goal: "",
-      incomeType: "account",
+      incomeType: "cuenta",
       targetAmount: "",
       currentAmount: "",
     })
@@ -193,8 +193,8 @@ export default function SavingsPage() {
     })
   }
 
-  const handleToggleStatus = (id: string, currentStatus: "pending" | "completed") => {
-    updateSavings(id, { status: currentStatus === "pending" ? "completed" : "pending" })
+  const handleToggleStatus = (id: string, currentStatus: "pendiente" | "completado") => {
+    updateSavings(id, { status: currentStatus === "pendiente" ? "completado" : "pendiente" })
   }
 
   const handleUpdateAmount = async (
@@ -219,7 +219,7 @@ export default function SavingsPage() {
 
   const totalSaved = savings.reduce((sum, s) => sum + s.currentAmount, 0)
   const totalTarget = savings.reduce((sum, s) => sum + s.targetAmount, 0)
-  const completedGoals = savings.filter((s) => s.status === "completed").length
+  const completedGoals = savings.filter((s) => s.status === "completado").length
 
   return (
     <div className="container mx-auto max-w-7xl space-y-6">
@@ -269,7 +269,7 @@ export default function SavingsPage() {
                     </Label>
                     <Select
                       value={goalFormData.incomeType}
-                      onValueChange={(value: "cash" | "account") =>
+                      onValueChange={(value: "efectivo" | "cuenta") =>
                         setGoalFormData({ ...goalFormData, incomeType: value })
                       }
                     >
@@ -277,8 +277,8 @@ export default function SavingsPage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="cash">Cash</SelectItem>
-                        <SelectItem value="account">Account</SelectItem>
+                        <SelectItem value="efectivo">Efectivo</SelectItem>
+                        <SelectItem value="cuenta">Cuenta</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -309,14 +309,14 @@ export default function SavingsPage() {
                     </Label>
                     <div className="text-xs text-muted-foreground mb-1">
                       Available in {goalFormData.incomeType}: S/.{" "}
-                      {(goalFormData.incomeType === "cash" ? balances.cash : balances.account).toFixed(2)}
+                      {(goalFormData.incomeType === "efectivo" ? balances.efectivo : balances.cuenta).toFixed(2)}
                     </div>
                     <Input
                       id="currentAmount"
                       type="number"
                       step="0.01"
                       min="0"
-                      max={goalFormData.incomeType === "cash" ? balances.cash : balances.account}
+                      max={goalFormData.incomeType === "efectivo" ? balances.efectivo : balances.cuenta}
                       value={goalFormData.currentAmount}
                       onChange={(e) =>
                         setGoalFormData({
@@ -364,7 +364,7 @@ export default function SavingsPage() {
                     </Label>
                     <Select
                       value={goalFormData.incomeType}
-                      onValueChange={(value: "cash" | "account") =>
+                      onValueChange={(value: "efectivo" | "cuenta") =>
                         setGoalFormData({ ...goalFormData, incomeType: value })
                       }
                     >
@@ -372,8 +372,8 @@ export default function SavingsPage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="cash">Cash</SelectItem>
-                        <SelectItem value="account">Account</SelectItem>
+                        <SelectItem value="efectivo">Efectivo</SelectItem>
+                        <SelectItem value="cuenta">Cuenta</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -541,7 +541,7 @@ export default function SavingsPage() {
       <div className="grid gap-4">
         {savings.map((goal) => {
           const progress = (goal.currentAmount / goal.targetAmount) * 100
-          const availableBalance = goal.incomeType === "cash" ? balances.cash : balances.account
+          const availableBalance = goal.incomeType === "efectivo" ? balances.efectivo : balances.cuenta
 
           return (
             <Card key={goal.id}>
@@ -551,7 +551,7 @@ export default function SavingsPage() {
                     <CardTitle className="text-base md:text-lg font-semibold line-clamp-1">{goal.goal}</CardTitle>
                     <p className="text-sm text-muted-foreground flex items-center">
                       {goal.incomeType} •
-                      {goal.status === "completed" ? (
+                      {goal.status === "completado" ? (
                         <span className="text-green-500 flex items-center ml-1">
                           {goal.status} <CheckCircle className="h-3 w-3 ml-1" />
                         </span>
@@ -626,7 +626,7 @@ export default function SavingsPage() {
                     </p>
                   </div>
                 </div>
-                {goal.status === "pending" && (
+                {goal.status === "pendiente" && (
                   <div className="flex flex-col gap-1 w-full">
                     <div className="flex gap-2">
                       <Input

@@ -10,8 +10,8 @@ export default function BankPage() {
   const [incomeVisible, setIncomeVisible] = useState(4)
 
   const totalIncome = income.reduce((sum, i) => sum + i.amount, 0)
-  const cashIncome = income.filter((i) => i.incomeType === "cash").reduce((sum, i) => sum + i.amount, 0)
-  const accountIncome = income.filter((i) => i.incomeType === "account").reduce((sum, i) => sum + i.amount, 0)
+  const cashIncome = income.filter((i) => i.incomeType === "efectivo").reduce((sum, i) => sum + i.amount, 0)
+  const accountIncome = income.filter((i) => i.incomeType === "cuenta").reduce((sum, i) => sum + i.amount, 0)
   
   // ADD THESE CALCULATIONS
   const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0)
@@ -19,13 +19,13 @@ export default function BankPage() {
   const currentBalance = totalIncome - totalExpenses - totalSavings
   
   // Calculate expenses and savings by payment type
-  const cashExpenses = expenses.filter((e) => e.paymentType === "cash").reduce((sum, e) => sum + e.amount, 0)
-  const accountExpenses = expenses.filter((e) => e.paymentType === "account").reduce((sum, e) => sum + e.amount, 0)
+  const cashExpenses = expenses.filter((e) => e.paymentType === "efectivo").reduce((sum, e) => sum + e.amount, 0)
+  const accountExpenses = expenses.filter((e) => e.paymentType === "cuenta").reduce((sum, e) => sum + e.amount, 0)
   const cashSavings = savings
-  .filter((s) => s.incomeType === "cash")
+  .filter((s) => s.incomeType === "efectivo")
   .reduce((sum, s) => sum + Number(s.currentAmount || 0), 0)
   const accountSavings = savings
-  .filter((s) => s.incomeType === "account")
+  .filter((s) => s.incomeType === "cuenta")
   .reduce((sum, s) => sum + Number(s.currentAmount || 0), 0)
   
   // Calculate current balances by type
@@ -104,7 +104,7 @@ export default function BankPage() {
                 <div className="flex items-center gap-2">
                   <TrendingUp className="h-4 w-4 text-muted-foreground" />
                   <span className="text-muted-foreground">
-                    {income.filter((i) => i.incomeType === "cash").length} transacciones
+                    {income.filter((i) => i.incomeType === "efectivo").length} transacciones
                   </span>
                 </div>
               </div>
@@ -148,7 +148,7 @@ export default function BankPage() {
                 <div className="flex items-center gap-2">
                   <TrendingUp className="h-4 w-4 text-muted-foreground" />
                   <span className="text-muted-foreground">
-                    {income.filter((i) => i.incomeType === "account").length} transacciones
+                    {income.filter((i) => i.incomeType === "cuenta").length} transacciones
                   </span>
                 </div>
               </div>

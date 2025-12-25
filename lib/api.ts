@@ -9,32 +9,32 @@ export interface ApiResponse<T> {
 export interface ApiIncome {
   id: string
   date: string
-  income_type: "cash" | "account"
+  income_type: "efectivo" | "cuenta"
   amount: number
-  category: "salary" | "other"
+  category: "salario" | "otros"
 }
 
 export interface ApiExpense {
   id: string
   date: string
-  payment_type: "cash" | "account"
+  payment_type: "efectivo" | "cuenta"
   amount: number
-  category: "shopping" | "transportation" | "entertainment"
+  category: string
 }
 
 export interface ApiSaving {
   id: string
   goal: string
-  income_type: "cash" | "account"
-  status: "pending" | "completed"
+  income_type: "efectivo" | "cuenta"
+  status: "pendiente" | "completado"
   target_amount: number
   current_amount: number
 }
 
 export interface ApiBank {
   id: string
-  cash: number
-  account: number
+  efectivo: number
+  cuenta: number
   savings_percentage: number
 }
 
@@ -278,8 +278,8 @@ export async function updateBank(bank: ApiBank): Promise<boolean> {
       },
       body: JSON.stringify({
         id: bank.id,
-        cash: bank.cash,
-        account: bank.account,
+        efectivo: bank.efectivo,
+        cuenta: bank.cuenta,
         savings_percentage: bank.savings_percentage,
       }),
     })

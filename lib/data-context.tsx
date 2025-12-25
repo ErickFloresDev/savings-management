@@ -3,10 +3,9 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import * as api from "./api"
 
-type IncomeType = "cash" | "account"
-type ExpenseCategory = "shopping" | "transportation" | "entertainment"
-type IncomeCategory = "salary" | "other"
-type SavingsStatus = "pending" | "completed"
+type IncomeType = "efectivo" | "cuenta"
+type IncomeCategory = "salario" | "otros"
+type SavingsStatus = "pendiente" | "completado"
 
 export interface Income {
   id: string
@@ -21,7 +20,7 @@ export interface Expense {
   date: string
   paymentType: IncomeType
   amount: number
-  category: ExpenseCategory
+  category: string
 }
 
 export interface Savings {
@@ -34,8 +33,8 @@ export interface Savings {
 }
 
 export interface Bank {
-  cash: number
-  account: number
+  efectivo: number
+  cuenta: number
   savingsPercentage: number
 }
 
@@ -56,10 +55,10 @@ export interface DataContextType {
   addAmountToGoal: (
     goalId: string,
     amount: number,
-    sourceType: "cash" | "account",
+    sourceType: "efectivo" | "cuenta",
   ) => Promise<{ success: boolean; message: string }>
   updateSavingsPercentage: (percentage: number) => Promise<void>
-  updateBank: (type: "cash" | "account", amount: number) => Promise<void>
+  updateBank: (type: "efectivo" | "cuenta", amount: number) => Promise<void>
   getTotalBalance: () => number
   apiRequest: () => Promise<void>
   isLoading: boolean
@@ -71,7 +70,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [income, setIncome] = useState<Income[]>([])
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [savings, setSavings] = useState<Savings[]>([])
-  const [bank, setBank] = useState<Bank>({ cash: 0, account: 0, savingsPercentage: 10 })
+  const [bank, setBank] = useState<Bank>({ efectivo: 0, cuenta: 0, savingsPercentage: 10 })
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
@@ -124,8 +123,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
       if (bankData) {
         setBank({
-          cash: bankData.cash,
-          account: bankData.account,
+          efectivo: bankData.efectivo,
+          cuenta: bankData.cuenta,
           savingsPercentage: bankData.savings_percentage,
         })
       }
@@ -137,7 +136,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   }
 
   const getTotalBalance = () => {
-    return bank.cash + bank.account
+    return bank.efectivo + bank.cuenta
   }
 
   const addIncome = async (newIncome: Omit<Income, "id">) => {
@@ -190,12 +189,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
     }
 
     //console.log("[v0] Creating expense:", apiExpense)
-    //console.log("[v0] Balance before expense - Cash:", bank.cash, "Account:", bank.account)
+    //console.log("[v0] Balance before expense - Efectivo:", bank.efectivo, "Cuenta:", bank.cuenta)
 
     const success = await api.createExpense(apiExpense)
     if (success) {
       await loadAllData()
-      //console.log("[v0] Balance after expense - Cash:", bank.cash, "Account:", bank.account)
+      //console.log("[v0] Balance after expense - Efectivo:", bank.efectivo, "Cuenta:", bank.cuenta)
     }
   }
 
@@ -270,14 +269,14 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const addAmountToGoal = async (
     goalId: string,
     amount: number,
-    sourceType: "cash" | "account",
+    sourceType: "efectivo" | "cuenta",
   ): Promise<{ success: boolean; message: string }> => {
     if (amount <= 0) {
       return { success: false, message: "Amount must be greater than 0" }
     }
 
     // Calcular balance disponible en tiempo real
-    const calculateAvailableBalance = (type: "cash" | "account") => {
+    const calculateAvailableBalance = (type: "efectivo" | "cuenta") => {
       const totalIncome = income
         .filter(i => i.incomeType === type)
         .reduce((sum, i) => sum + i.amount, 0)
@@ -315,7 +314,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     }
 
     const newAmount = goal.currentAmount + amount
-    const newStatus = newAmount >= goal.targetAmount ? "completed" : "pending"
+    const newStatus = newAmount >= goal.targetAmount ? "completado" : "pendiente"
 
     await updateSavings(goalId, { currentAmount: newAmount, status: newStatus as SavingsStatus })
 
@@ -325,8 +324,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const updateSavingsPercentage = async (percentage: number) => {
     const apiBank = {
       id: "SAVE",
-      cash: bank.cash,
-      account: bank.account,
+      efectivo: bank.efectivo,
+      cuenta: bank.cuenta,
       savings_percentage: percentage,
     }
 
@@ -336,11 +335,11 @@ export function DataProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const updateBank = async (type: "cash" | "account", amount: number) => {
+  const updateBank = async (type: "efectivo" | "cuenta", amount: number) => {
     const apiBank = {
       id: "SAVE",
-      cash: type === "cash" ? amount : bank.cash,
-      account: type === "account" ? amount : bank.account,
+      efectivo: type === "efectivo" ? amount : bank.efectivo,
+      cuenta: type === "cuenta" ? amount : bank.cuenta,
       savings_percentage: bank.savingsPercentage,
     }
 
